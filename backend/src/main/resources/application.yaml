@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: project
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/logic
+    username: postgres
+    password: 1004
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    encoding: UTF-8
+    cache: false
+
+server:
+  port: 8081
+
+jwt:
+  secret: "security-vue-lab-jwt-secret-key-2026-logic-project"
+  expiration: 315360000000
