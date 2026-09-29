@@ -4,6 +4,11 @@
 .attendance-header p { color: #64748b; font-size: 14px; }
 .attendance-header .attendance-eyebrow { color: #3b6fbd; font-weight: 700; font-size: 11px; letter-spacing: 1.4px; }
 .attendance-panel { padding: 24px; background: #fff; border: 1px solid #e2e8f0; border-radius: 16px; margin: 20px 0; box-shadow: 0 4px 14px #0f172a03; }
+.attendance-today { border-color: #9edecb; background: linear-gradient(125deg,#e5faf2,#fff 65%); border-top: 4px solid #16a085; }
+.attendance-today .attendance-today-label { color: #087f70; font-size: 11px; font-weight: 800; letter-spacing: 1px; margin-bottom: 7px; }
+.attendance-today .attendance-clock-grid>div { background: #ffffffc9; border: 1px solid #d2ebe2; }
+.attendance-today .attendance-button.primary { background: #087f70; border-color: #087f70; }
+.attendance-work-complete { color: #087f70; font-weight: 700; font-size: 14px; margin-bottom: 20px; }
 .attendance-section-title { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 20px; }
 .attendance-section-title h2 { font-size: 18px; margin: 0 0 5px; }.attendance-section-title p, .attendance-section-title>span { font-size: 12px; color: #64748b; }
 .attendance-button { display: inline-flex; align-items: center; justify-content: center; padding: 10px 16px; border: 1px solid #d5deeb; border-radius: 8px; background: #fff; color: #334155; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; }

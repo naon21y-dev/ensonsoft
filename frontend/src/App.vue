@@ -3,6 +3,7 @@
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import LanguageSwitcher from './components/LanguageSwitcher.vue'
+import SidebarAttendanceCard from './components/SidebarAttendanceCard.vue'
 import { setLocale, roleText } from './i18n'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from './stores/auth'
@@ -97,6 +98,8 @@ const logout = () => {
       <!-- =====================================
            NAVIGATION
       ====================================== -->
+
+      <SidebarAttendanceCard v-if="authStore.isLoggedIn && authStore.role === 'USER'" :key="authStore.username" />
 
       <nav class="sidebar-nav">
 

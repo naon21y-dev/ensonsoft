@@ -13,7 +13,7 @@ const missing = { id: null, memberId: 1, name: '직원 원문', username: 'emplo
   const browser = await chromium.launch({ headless: true, channel: process.env.BROWSER_CHANNEL || 'msedge' });
   try {
     const errors = [], requests = [];
-    let record = { ...missing }, fail = false;
+    let record = { ...missing }, fail = false, failToday = false;
     async function context(role) {
       const ctx = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
       await ctx.addInitScript(role => {
@@ -23,7 +23,7 @@ const missing = { id: null, memberId: 1, name: '직원 원문', username: 'emplo
       await ctx.route(url => url.pathname.startsWith('/api/'), async route => {
         const req = route.request(), url = new URL(req.url()), p = url.pathname;
         requests.push({ path: p, method: req.method(), body: req.postDataJSON(), query: url.search });
-        if (fail) return route.fulfill({ status: 500, json: {} });
+        if (fail || (failToday && p.endsWith('/today'))) return route.fulfill({ status: 500, json: {} });
         let data;
         if (p.endsWith('/check-in')) {
           assert.deepEqual(Object.keys(req.postDataJSON()).sort(), ['notes', 'workType']);
@@ -61,24 +61,33 @@ const missing = { id: null, memberId: 1, name: '직원 원문', username: 'emplo
     await page.locator('.attendance-fields select').selectOption('DUTY');
     await page.locator('textarea').fill('현장 순찰 원문');
     await choose(page, '日本語');
-    assert.equal(await page.locator('select').inputValue(), 'DUTY');
+    assert.equal(await page.locator('.attendance-fields select').inputValue(), 'DUTY');
+    assert.equal(await page.locator('.shift-type select').inputValue(), 'DUTY');
     assert.equal(await page.locator('textarea').inputValue(), '현장 순찰 원문');
     await choose(page, '한국어'); assert.equal(await page.locator('html').getAttribute('lang'), 'ko');
     await choose(page, 'English');
-    await page.getByRole('button', { name: 'Clock in', exact: true }).click(); await settle(page);
-    assert(await page.getByRole('button', { name: 'Clock out', exact: true }).isVisible());
+    await page.locator('.shift-card').getByRole('button', { name: 'Clock in', exact: false }).click(); await settle(page);
+    assert(await page.locator('.attendance-page').getByRole('button', { name: 'Clock out', exact: true }).isVisible());
+    assert.equal(await page.locator('.shift-status').innerText(), 'Working');
+    await page.screenshot({ path: join(screenshots, 'attendance-user-desktop.png'), fullPage: true });
     assert.equal(record.workType, 'DUTY');
     await page.locator('textarea').fill('인계 완료 원문');
-    await page.getByRole('button', { name: 'Clock out', exact: true }).click(); await settle(page);
+    await page.locator('.attendance-page').getByRole('button', { name: 'Clock out', exact: true }).click(); await settle(page);
     assert.equal(record.notes, '인계 완료 원문');
     assert.equal(await page.getByRole('button', { name: 'Clock in', exact: true }).count(), 0);
     assert(await page.locator('.attendance-badge').first().innerText() === 'Clocked out');
+    assert.equal(await page.locator('.shift-complete').innerText(), '✓ Work completed for today');
     await page.setViewportSize({ width: 390, height: 844 });
     await page.screenshot({ path: join(screenshots, 'attendance-user-mobile.png'), fullPage: true });
     assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'Mobile viewport overflow');
+    await page.locator('.attendance-mini').click();
+    assert(await page.locator('.shift-card').isVisible());
+    await page.screenshot({ path: join(screenshots, 'attendance-sidebar-mobile.png'), fullPage: true });
+    await page.locator('.shift-close').click();
     await page.goto(base + '/admin/attendance'); await settle(page);
     assert.equal(new URL(page.url()).pathname, '/');
     const admin = await context('ADMIN'); await admin.goto(base + '/admin/attendance'); await settle(admin);
+    assert.equal(await admin.locator('.sidebar-attendance').count(), 0);
     assert(await admin.locator('a[href="/admin/attendance"]').isVisible());
     assert.equal(await admin.locator('.attendance-summary-card').count(), 7);
     assert.equal(await admin.locator('.attendance-table tbody tr').count(), 2);
@@ -100,6 +109,26 @@ const missing = { id: null, memberId: 1, name: '직원 원문', username: 'emplo
     await choose(admin, '日本語');
     assert(!(await admin.getByRole('alert').innerText()).includes('failed'));
     assert(!/attendance\.|undefined/.test(await admin.locator('.attendance-page').innerText()));
+    fail = false; failToday = true;
+    const unavailable = await context('USER'); await unavailable.goto(base + '/attendance'); await settle(unavailable);
+    assert(await unavailable.locator('.attendance-today').isVisible());
+    assert((await unavailable.locator('.attendance-today').innerText()).includes('could not be loaded'));
+    assert.equal(await unavailable.locator('.attendance-table tbody tr').count(), 1);
+    failToday = false;
+    await unavailable.locator('.shift-retry').click(); await settle(unavailable);
+    assert.equal(await unavailable.locator('.shift-status').innerText(), 'Clocked out');
+    record = { ...missing };
+    await unavailable.reload(); await settle(unavailable);
+    await unavailable.locator('.attendance-fields select').selectOption('EMERGENCY');
+    await unavailable.locator('.attendance-page').getByRole('button', { name: 'Clock in', exact: true }).click(); await settle(unavailable);
+    assert.equal(await unavailable.locator('.shift-status').innerText(), 'Working');
+    await unavailable.locator('textarea').fill('추가 특이사항');
+    await unavailable.locator('.attendance-page').getByRole('button', { name: 'Save notes', exact: true }).click(); await settle(unavailable);
+    assert.equal(record.notes, '추가 특이사항');
+    await unavailable.locator('.shift-card').getByRole('button', { name: 'Clock out', exact: false }).click(); await settle(unavailable);
+    assert.equal(await unavailable.locator('.attendance-badge').first().innerText(), 'Clocked out');
+    assert.equal(requests.filter(r => r.path.endsWith('/check-in')).length, 2);
+    assert.equal(requests.filter(r => r.path.endsWith('/check-out')).length, 2);
     assert.deepEqual(errors, []);
     console.log(`Attendance browser checks passed: USER lifecycle, server-time payloads, ADMIN filters/details, route guard, KO/EN/JP, mobile, errors (${requests.length} mocked requests).`);
   } finally { await browser.close(); }

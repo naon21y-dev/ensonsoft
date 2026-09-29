@@ -1,38 +1,24 @@
 <script setup>
-import { computed, onMounted, ref } from 'vue'
-import { getMyAttendanceToday, getMyAttendanceHistory, checkIn, checkOut, saveAttendanceNotes } from '../api/Attendance'
+import { onMounted, ref, watch } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useAttendanceStore } from '../stores/attendance'
+import { getMyAttendanceHistory } from '../api/Attendance'
 import { useAttendance, workTypes, daysBefore } from '../composables/useAttendance'
 import AttendanceTable from '../components/AttendanceTable.vue'
 import '../assets/attendance.css'
 
 const { t, time, duration, synchronize, errorText } = useAttendance()
-const today = ref(null)
+const store = useAttendanceStore()
+const { today, loading, busy, error, notice, workType, notes, record, canCheckIn, overnight, revision } = storeToRefs(store)
 const history = ref(null)
-const loading = ref(false)
 const historyLoading = ref(false)
-const busy = ref(false)
-const error = ref('')
 const historyError = ref('')
-const notice = ref('')
-const workType = ref('NORMAL')
-const notes = ref('')
 const from = ref('')
 const to = ref('')
-const record = computed(() => today.value?.activeAttendance || today.value?.attendance)
-const canCheckIn = computed(() => today.value && !today.value.activeAttendance && !today.value.attendance.id)
-const overnight = computed(() => today.value?.activeAttendance && today.value.activeAttendance.workDate !== today.value.date)
-
-async function loadToday() {
-  if (loading.value) return
-  loading.value = true; error.value = ''
-  try {
-    today.value = (await getMyAttendanceToday()).data
-    synchronize(today.value.serverTime)
-    notes.value = record.value.notes
-    if (!to.value) { to.value = today.value.date; from.value = daysBefore(to.value) }
-  } catch (e) { error.value = errorText(e) }
-  finally { loading.value = false }
-}
+watch(() => today.value?.serverTime, value => { if (value) synchronize(value) }, { immediate: true })
+watch(() => today.value?.date, value => {
+  if (value && !to.value) { to.value = value; from.value = daysBefore(value) }
+}, { immediate: true })
 let historyRequest = 0
 async function loadHistory() {
   const request = ++historyRequest
@@ -43,22 +29,9 @@ async function loadHistory() {
   } catch (e) { if (request === historyRequest) historyError.value = errorText(e) }
   finally { if (request === historyRequest) historyLoading.value = false }
 }
-async function act(action) {
-  if (busy.value || loading.value) return
-  busy.value = true; error.value = ''; notice.value = ''
-  try {
-    if (action === 'in') await checkIn({ workType: workType.value, notes: notes.value })
-    else if (action === 'out') {
-      // Save the employee's current note before closing the shift.
-      if (notes.value !== record.value.notes) await saveAttendanceNotes(notes.value)
-      await checkOut()
-    } else await saveAttendanceNotes(notes.value)
-    notice.value = action === 'in' ? 'attendance.checkedIn' : action === 'out' ? 'attendance.checkedOut' : 'attendance.notesSaved'
-    await loadToday(); await loadHistory()
-  } catch (e) { const message = errorText(e); if (e.response?.status === 400) await loadToday(); error.value = message }
-  finally { busy.value = false }
-}
-async function refresh() { notice.value = ''; await loadToday(); await loadHistory() }
+const act = action => store.act(action)
+watch(revision, () => loadHistory())
+async function refresh() { notice.value = ''; await store.refresh(); await loadHistory() }
 onMounted(refresh)
 </script>
 
@@ -69,16 +42,18 @@ onMounted(refresh)
     </header>
     <p v-if="error" class="attendance-alert" role="alert">{{ t(error) }}</p>
     <p v-if="notice" class="attendance-notice" role="status">{{ t(notice) }}</p>
-    <p v-if="loading && !today" class="attendance-empty">{{ t('attendance.loading') }}</p>
-    <section v-if="today" class="attendance-panel">
-      <div class="attendance-section-title"><div><h2>{{ t('attendance.today') }}</h2><p>{{ today.date }} · {{ today.zone }}</p></div>
-        <span class="attendance-badge" :class="record.status">{{ t(`attendance.states.${record.status}`) }}</span></div>
+    <section class="attendance-panel attendance-today" :aria-busy="loading || busy">
+      <div class="attendance-section-title"><div><p class="attendance-today-label">{{ t('attendance.quickTitle') }}</p><h2>{{ t('attendance.today') }}</h2><p v-if="today">{{ today.date }} · {{ today.zone }}</p></div>
+        <span v-if="record" class="attendance-badge" :class="record.status">{{ t(`attendance.states.${record.status}`) }}</span></div>
+      <div v-if="!today" class="attendance-empty"><p>{{ t(loading ? 'attendance.loading' : 'attendance.unavailable') }}</p><button v-if="!loading" class="attendance-button" @click="refresh">{{ t('attendance.refresh') }}</button></div>
+      <template v-else>
       <p v-if="overnight" class="attendance-info">{{ t('attendance.overnight', { date: record.workDate }) }}</p>
       <div class="attendance-clock-grid">
         <div><span>{{ t('attendance.checkInAt') }}</span><strong>{{ time(record.checkInAt, today.zone) }}</strong></div>
         <div><span>{{ t('attendance.checkOutAt') }}</span><strong>{{ time(record.checkOutAt, today.zone) }}</strong></div>
         <div><span>{{ t('attendance.worked') }}</span><strong>{{ record.id ? duration(record) : '—' }}</strong></div>
       </div>
+      <p v-if="record.status === 'CHECKED_OUT'" class="attendance-work-complete">✓ {{ t('attendance.workComplete') }}</p>
       <form @submit.prevent="act(canCheckIn ? 'in' : 'notes')">
         <div class="attendance-fields">
           <label>{{ t('attendance.workType') }}<select v-if="canCheckIn" v-model="workType" :disabled="busy || loading"><option v-for="type in workTypes" :key="type" :value="type">{{ t(`attendance.types.${type}`) }}</option></select>
@@ -92,6 +67,7 @@ onMounted(refresh)
             <button v-if="today.activeAttendance" class="attendance-button primary" :disabled="busy || loading" type="button" @click="act('out')">{{ t('attendance.checkOut') }}</button></template>
         </div>
       </form>
+      </template>
     </section>
     <section class="attendance-panel">
       <div class="attendance-section-title"><h2>{{ t('attendance.myHistory') }}</h2><span class="attendance-muted">{{ t('attendance.rangeHint') }}</span></div>

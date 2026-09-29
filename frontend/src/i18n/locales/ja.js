@@ -1,5 +1,6 @@
 export default {
   "attendance": {
+    "quickTitle": "本日の出退勤", "workComplete": "本日の勤務完了", "unavailable": "本日の勤務情報を取得できませんでした。更新してください。",
     "eyebrow": "従業員の勤怠", "adminEyebrow": "管理者 · 勤怠状況", "myTitle": "自分の勤怠", "adminTitle": "勤怠管理",
     "myDescription": "出退勤を記録し、自分の勤務履歴を確認できます。", "adminDescription": "日付ごとに従業員の出退勤と勤務状況を確認します。",
     "today": "本日の勤務状態", "myHistory": "自分の勤怠履歴", "employeeList": "従業員別の勤怠状況", "employeeDetail": "従業員の勤怠詳細",

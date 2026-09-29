@@ -1,5 +1,6 @@
 export default {
   "attendance": {
+    "quickTitle": "TODAY’S ATTENDANCE", "workComplete": "Work completed for today", "unavailable": "Today's attendance could not be loaded. Please refresh.",
     "eyebrow": "EMPLOYEE ATTENDANCE", "adminEyebrow": "ADMINISTRATION · ATTENDANCE", "myTitle": "My attendance", "adminTitle": "Attendance management",
     "myDescription": "Clock in and out and review your work history.", "adminDescription": "Review employee attendance and working hours by date.",
     "today": "Today's work status", "myHistory": "My attendance history", "employeeList": "Employee attendance", "employeeDetail": "Employee attendance details",

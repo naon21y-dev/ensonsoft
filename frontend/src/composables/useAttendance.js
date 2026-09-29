@@ -15,6 +15,9 @@ export function useAttendance() {
   const time = (value, zone = 'Asia/Seoul') => value ? new Intl.DateTimeFormat(locale.value, {
     timeZone: zone, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23',
   }).format(new Date(value)) : '—'
+  const clockTime = (value, zone = 'Asia/Seoul') => value ? new Intl.DateTimeFormat(locale.value, {
+    timeZone: zone, hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23',
+  }).format(new Date(value)) : '—'
   const duration = row => {
     tick.value // Refresh the displayed elapsed time without writing client time to the API.
     let seconds = row.workedSeconds || 0
@@ -28,7 +31,7 @@ export function useAttendance() {
     return error.response?.status === 401 ? 'attendance.errors.unauthorized'
       : error.response?.status === 403 ? 'attendance.errors.forbidden' : 'attendance.errors.failed'
   }
-  return { t, time, duration, synchronize, errorText }
+  return { t, time, clockTime, duration, synchronize, errorText }
 }
 
 export function daysBefore(date, days = 30) {

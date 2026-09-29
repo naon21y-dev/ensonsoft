@@ -1,5 +1,6 @@
 export default {
   "attendance": {
+    "quickTitle": "오늘의 출퇴근", "workComplete": "오늘 근무 완료", "unavailable": "오늘 근무정보를 불러오지 못했습니다. 새로고침해 주세요.",
     "eyebrow": "직원 근태", "adminEyebrow": "관리자 · 근태 현황", "myTitle": "내 근태", "adminTitle": "근태관리",
     "myDescription": "출퇴근을 기록하고 본인의 근무 이력을 확인하세요.", "adminDescription": "날짜별 직원의 출퇴근과 근무 현황을 확인합니다.",
     "today": "오늘 근무상태", "myHistory": "본인 근태이력", "employeeList": "직원별 근태 현황", "employeeDetail": "직원 근태 상세",
