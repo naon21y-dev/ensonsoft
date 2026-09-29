@@ -1,4 +1,8 @@
 <script setup>
+import { useI18n } from 'vue-i18n'
+import { useUiMessage } from '../i18n'
+const { t } = useI18n()
+
 import { computed, onMounted, ref } from 'vue'
 
 import {
@@ -26,7 +30,7 @@ const vehicles = ref([])
 const events = ref([])
 
 const loading = ref(true)
-const errorMessage = ref('')
+const errorMessage = useUiMessage()
 
 
 // ========================================
@@ -133,7 +137,7 @@ const loadMonitoringData = async () => {
 
     errorMessage.value =
       error.response?.data?.message ||
-      '통합관제 데이터를 불러오지 못했습니다.'
+      t('m327')
 
   } finally {
 
@@ -266,7 +270,7 @@ const searchEventData = async () => {
 
     alert(
       error.response?.data?.message ||
-      '이벤트 데이터를 조회하지 못했습니다.'
+      t('m328')
     )
 
   } finally {
@@ -362,7 +366,7 @@ const searchVehicleData = async () => {
 
     alert(
       error.response?.data?.message ||
-      '차량 데이터를 조회하지 못했습니다.'
+      t('m329')
     )
 
   } finally {
@@ -444,7 +448,7 @@ const openEventDetail = async (event) => {
 
     alert(
       error.response?.data?.message ||
-      '이벤트 상세 정보를 불러오지 못했습니다.'
+      t('m330')
     )
 
   } finally {
@@ -569,7 +573,7 @@ const handleStartProcessing = async (event) => {
 
     alert(
       error.response?.data?.message ||
-      '이벤트 처리 시작에 실패했습니다.'
+      t('m331')
     )
 
   } finally {
@@ -624,7 +628,7 @@ const handleCompleteProcessing = async (
 
     alert(
       error.response?.data?.message ||
-      '이벤트 처리 완료에 실패했습니다.'
+      t('m332')
     )
 
   } finally {
@@ -643,22 +647,22 @@ const eventTypeText = (type) => {
 
   const map = {
 
-    ACCIDENT: '사고 감지',
+    ACCIDENT: t('m091'),
 
     STOPPED_VEHICLE:
-      '정지 차량',
+      t('m092'),
 
     WRONG_WAY:
-      '역주행',
+      t('m093'),
 
     PEDESTRIAN:
-      '보행자 감지',
+      t('m094'),
 
     CONGESTION:
-      '교통 혼잡',
+      t('m333'),
 
     ETC:
-      '기타'
+      t('m096')
   }
 
   return map[type] || type
@@ -674,13 +678,13 @@ const statusText = (status) => {
   const map = {
 
     UNPROCESSED:
-      '미처리',
+      t('m090'),
 
     PROCESSING:
-      '처리중',
+      t('m088'),
 
     COMPLETED:
-      '처리완료'
+      t('m334')
   }
 
   return map[status] || status
@@ -696,13 +700,13 @@ const severityText = (severity) => {
   const map = {
 
     NORMAL:
-      '일반',
+      t('m097'),
 
     WARNING:
-      '주의',
+      t('m082'),
 
     CRITICAL:
-      '긴급'
+      t('m098')
   }
 
   return map[severity] || severity
@@ -718,13 +722,13 @@ const vehicleStatusText = (status) => {
   const map = {
 
     NORMAL:
-      '정상',
+      t('m081'),
 
     WARNING:
-      '주의',
+      t('m082'),
 
     ERROR:
-      '오류'
+      t('m335')
   }
 
   return map[status] || status
@@ -815,15 +819,15 @@ onMounted(() => {
         <div>
 
           <p class="system-name">
-            ENSONSOFT SMART MOBILITY
+            {{ t('m229') }}
           </p>
 
           <h1>
-            통합관제센터
+            {{ t('m336') }}
           </h1>
 
           <p class="subtitle">
-            차량 및 영상분석 기반 스마트 모빌리티 통합 관제 시스템
+            {{ t('m337') }}
           </p>
 
         </div>
@@ -836,7 +840,7 @@ onMounted(() => {
         @click="refreshData"
       >
         <span>↻</span>
-        데이터 새로고침
+        {{ t('m338') }}
       </button>
 
     </header>
@@ -852,11 +856,11 @@ onMounted(() => {
       <div class="loading-circle"></div>
 
       <strong>
-        관제 시스템 연결 중
+        {{ t('m339') }}
       </strong>
 
       <span>
-        실시간 데이터를 불러오고 있습니다.
+        {{ t('m340') }}
       </span>
 
     </div>
@@ -870,7 +874,7 @@ onMounted(() => {
     >
 
       <strong>
-        관제 데이터 연결 오류
+        {{ t('m341') }}
       </strong>
 
       <p>
@@ -878,7 +882,7 @@ onMounted(() => {
       </p>
 
       <button @click="refreshData">
-        다시 시도
+        {{ t('m134') }}
       </button>
 
     </div>
@@ -899,7 +903,7 @@ onMounted(() => {
           <div class="kpi-content">
 
             <span>
-              차량번호 인식
+              {{ t('m342') }}
             </span>
 
             <strong>
@@ -907,7 +911,7 @@ onMounted(() => {
             </strong>
 
             <small>
-              최근 인식 데이터
+              {{ t('m343') }}
             </small>
 
           </div>
@@ -924,7 +928,7 @@ onMounted(() => {
           <div class="kpi-content">
 
             <span>
-              전체 이벤트
+              {{ t('m344') }}
             </span>
 
             <strong>
@@ -932,7 +936,7 @@ onMounted(() => {
             </strong>
 
             <small>
-              영상분석 감지
+              {{ t('m345') }}
             </small>
 
           </div>
@@ -949,7 +953,7 @@ onMounted(() => {
           <div class="kpi-content">
 
             <span>
-              미처리 이벤트
+              {{ t('m346') }}
             </span>
 
             <strong>
@@ -957,7 +961,7 @@ onMounted(() => {
             </strong>
 
             <small>
-              확인이 필요한 이벤트
+              {{ t('m347') }}
             </small>
 
           </div>
@@ -974,7 +978,7 @@ onMounted(() => {
           <div class="kpi-content">
 
             <span>
-              긴급 이벤트
+              {{ t('m348') }}
             </span>
 
             <strong>
@@ -982,7 +986,7 @@ onMounted(() => {
             </strong>
 
             <small>
-              긴급 대응 필요
+              {{ t('m349') }}
             </small>
 
           </div>
@@ -1003,11 +1007,11 @@ onMounted(() => {
           <div>
 
             <strong>
-              SYSTEM ONLINE
+              {{ t('m350') }}
             </strong>
 
             <small>
-              관제 시스템 정상 운영 중
+              {{ t('m351') }}
             </small>
 
           </div>
@@ -1018,21 +1022,21 @@ onMounted(() => {
         <div class="status-items">
 
           <div>
-            <span>미처리</span>
+            <span>{{ t('m090') }}</span>
             <strong>
               {{ unprocessedEvents }}
             </strong>
           </div>
 
           <div>
-            <span>처리중</span>
+            <span>{{ t('m088') }}</span>
             <strong>
               {{ processingEvents }}
             </strong>
           </div>
 
           <div>
-            <span>긴급</span>
+            <span>{{ t('m098') }}</span>
             <strong>
               {{ criticalEvents }}
             </strong>
@@ -1052,17 +1056,17 @@ onMounted(() => {
           <div>
 
             <span class="panel-label">
-              REAL-TIME MONITORING
+              {{ t('m352') }}
             </span>
 
             <h2>
-              영상분석 이벤트
+              {{ t('m353') }}
             </h2>
 
           </div>
 
           <span class="data-count">
-            {{ safeEvents.length }} EVENTS
+            {{ safeEvents.length }} {{ t('m354') }}
           </span>
 
         </div>
@@ -1075,13 +1079,13 @@ onMounted(() => {
           <div class="search-field">
 
             <label>
-              위치
+              {{ t('m355') }}
             </label>
 
             <input
               v-model="eventLocationSearch"
               type="text"
-              placeholder="예: 서울TG"
+              :placeholder="t('m356')"
               @keyup.enter="searchEventData"
             />
 
@@ -1091,38 +1095,38 @@ onMounted(() => {
           <div class="search-field">
 
             <label>
-              이벤트 종류
+              {{ t('m357') }}
             </label>
 
             <select
               v-model="eventTypeFilter"
             >
               <option value="ALL">
-                전체
+                {{ t('m064') }}
               </option>
 
               <option value="ACCIDENT">
-                사고 감지
+                {{ t('m091') }}
               </option>
 
               <option value="STOPPED_VEHICLE">
-                정지 차량
+                {{ t('m092') }}
               </option>
 
               <option value="WRONG_WAY">
-                역주행
+                {{ t('m093') }}
               </option>
 
               <option value="PEDESTRIAN">
-                보행자 감지
+                {{ t('m094') }}
               </option>
 
               <option value="CONGESTION">
-                교통 혼잡
+                {{ t('m333') }}
               </option>
 
               <option value="ETC">
-                기타
+                {{ t('m096') }}
               </option>
             </select>
 
@@ -1132,7 +1136,7 @@ onMounted(() => {
           <div class="search-field">
 
             <label>
-              위험도
+              {{ t('m358') }}
             </label>
 
             <select
@@ -1140,19 +1144,19 @@ onMounted(() => {
             >
 
               <option value="ALL">
-                전체
+                {{ t('m064') }}
               </option>
 
               <option value="NORMAL">
-                일반
+                {{ t('m097') }}
               </option>
 
               <option value="WARNING">
-                주의
+                {{ t('m082') }}
               </option>
 
               <option value="CRITICAL">
-                긴급
+                {{ t('m098') }}
               </option>
 
             </select>
@@ -1166,8 +1170,8 @@ onMounted(() => {
           >
             {{
               eventSearchLoading
-                ? '조회중...'
-                : '검색'
+                ? t('m359')
+                : t('m060')
             }}
           </button>
 
@@ -1176,7 +1180,7 @@ onMounted(() => {
             class="reset-button"
             @click="resetEventSearch"
           >
-            초기화
+            {{ t('m061') }}
           </button>
 
         </div>
@@ -1193,7 +1197,7 @@ onMounted(() => {
             }"
             @click="activeTab = 'events'"
           >
-            전체 이벤트
+            {{ t('m344') }}
           </button>
 
 
@@ -1206,7 +1210,7 @@ onMounted(() => {
               activeTab = 'unprocessed'
             "
           >
-            미처리
+            {{ t('m090') }}
 
             <b>
               {{ unprocessedEvents }}
@@ -1223,7 +1227,7 @@ onMounted(() => {
               activeTab = 'processing'
             "
           >
-            처리중
+            {{ t('m088') }}
 
             <b>
               {{ processingEvents }}
@@ -1240,7 +1244,7 @@ onMounted(() => {
               activeTab = 'completed'
             "
           >
-            처리완료
+            {{ t('m334') }}
           </button>
 
         </div>
@@ -1360,7 +1364,7 @@ onMounted(() => {
                   openEventDetail(event)
                 "
               >
-                상세
+                {{ t('m192') }}
               </button>
 
 
@@ -1376,7 +1380,7 @@ onMounted(() => {
                   )
                 "
               >
-                처리 시작
+                {{ t('m319') }}
               </button>
 
 
@@ -1392,7 +1396,7 @@ onMounted(() => {
                   )
                 "
               >
-                처리 완료
+                {{ t('m322') }}
               </button>
 
             </div>
@@ -1406,7 +1410,7 @@ onMounted(() => {
             "
             class="empty-state"
           >
-            현재 표시할 이벤트가 없습니다.
+            {{ t('m360') }}
           </div>
 
         </div>
@@ -1423,18 +1427,18 @@ onMounted(() => {
           <div>
 
             <span class="panel-label">
-              LICENSE PLATE RECOGNITION
+              {{ t('m361') }}
             </span>
 
             <h2>
-              차량번호 인식 현황
+              {{ t('m362') }}
             </h2>
 
           </div>
 
 
           <span class="data-count">
-            {{ safeVehicles.length }} RECORDS
+            {{ safeVehicles.length }} {{ t('m363') }}
           </span>
 
         </div>
@@ -1447,13 +1451,13 @@ onMounted(() => {
           <div class="search-field">
 
             <label>
-              차량번호
+              {{ t('m364') }}
             </label>
 
             <input
               v-model="plateSearch"
               type="text"
-              placeholder="예: 12가3456"
+              :placeholder="t('m365')"
               @keyup.enter="
                 searchVehicleData
               "
@@ -1465,13 +1469,13 @@ onMounted(() => {
           <div class="search-field">
 
             <label>
-              위치
+              {{ t('m355') }}
             </label>
 
             <input
               v-model="locationSearch"
               type="text"
-              placeholder="예: 서울TG"
+              :placeholder="t('m356')"
               @keyup.enter="
                 searchVehicleData
               "
@@ -1483,7 +1487,7 @@ onMounted(() => {
           <div class="search-field">
 
             <label>
-              상태
+              {{ t('m183') }}
             </label>
 
             <select
@@ -1493,19 +1497,19 @@ onMounted(() => {
             >
 
               <option value="ALL">
-                전체
+                {{ t('m064') }}
               </option>
 
               <option value="NORMAL">
-                정상
+                {{ t('m081') }}
               </option>
 
               <option value="WARNING">
-                주의
+                {{ t('m082') }}
               </option>
 
               <option value="ERROR">
-                오류
+                {{ t('m335') }}
               </option>
 
             </select>
@@ -1521,8 +1525,8 @@ onMounted(() => {
           >
             {{
               vehicleSearchLoading
-                ? '조회중...'
-                : '검색'
+                ? t('m359')
+                : t('m060')
             }}
           </button>
 
@@ -1533,7 +1537,7 @@ onMounted(() => {
               resetVehicleSearch
             "
           >
-            초기화
+            {{ t('m061') }}
           </button>
 
         </div>
@@ -1550,27 +1554,27 @@ onMounted(() => {
               <tr>
 
                 <th>
-                  차량번호
+                  {{ t('m364') }}
                 </th>
 
                 <th>
-                  인식 위치
+                  {{ t('m366') }}
                 </th>
 
                 <th>
-                  카메라
+                  {{ t('m367') }}
                 </th>
 
                 <th>
-                  인식 시간
+                  {{ t('m368') }}
                 </th>
 
                 <th>
-                  정확도
+                  {{ t('m369') }}
                 </th>
 
                 <th>
-                  상태
+                  {{ t('m183') }}
                 </th>
 
               </tr>
@@ -1694,7 +1698,7 @@ onMounted(() => {
             "
             class="empty-state"
           >
-            검색 결과가 없습니다.
+            {{ t('m370') }}
           </div>
 
         </div>
@@ -1723,11 +1727,11 @@ onMounted(() => {
           <div>
 
             <span class="modal-label">
-              EVENT DETAIL
+              {{ t('m371') }}
             </span>
 
             <h2>
-              이벤트 상세 정보
+              {{ t('m372') }}
             </h2>
 
           </div>
@@ -1753,7 +1757,7 @@ onMounted(() => {
           <div class="loading-circle"></div>
 
           <strong>
-            이벤트 정보를 불러오는 중...
+            {{ t('m373') }}
           </strong>
 
         </div>
@@ -1844,7 +1848,7 @@ onMounted(() => {
             <div class="detail-card">
 
               <span>
-                이벤트 번호
+                {{ t('m374') }}
               </span>
 
               <strong>
@@ -1857,7 +1861,7 @@ onMounted(() => {
             <div class="detail-card">
 
               <span>
-                발생 위치
+                {{ t('m375') }}
               </span>
 
               <strong>
@@ -1870,7 +1874,7 @@ onMounted(() => {
             <div class="detail-card">
 
               <span>
-                카메라
+                {{ t('m367') }}
               </span>
 
               <strong>
@@ -1883,7 +1887,7 @@ onMounted(() => {
             <div class="detail-card">
 
               <span>
-                발생 시간
+                {{ t('m295') }}
               </span>
 
               <strong>
@@ -1900,13 +1904,13 @@ onMounted(() => {
             <div class="detail-card">
 
               <span>
-                처리 담당자
+                {{ t('m376') }}
               </span>
 
               <strong>
                 {{
                   selectedEvent.processor ||
-                  '미배정'
+                  t('m377')
                 }}
               </strong>
 
@@ -1916,7 +1920,7 @@ onMounted(() => {
             <div class="detail-card">
 
               <span>
-                처리 완료 시간
+                {{ t('m315') }}
               </span>
 
               <strong>
@@ -1941,11 +1945,11 @@ onMounted(() => {
             <div>
 
               <span class="action-label">
-                EVENT CONTROL
+                {{ t('m378') }}
               </span>
 
               <strong>
-                이벤트 처리
+                {{ t('m379') }}
               </strong>
 
             </div>
@@ -1968,8 +1972,8 @@ onMounted(() => {
             >
               {{
                 eventActionLoading
-                  ? '처리중...'
-                  : '처리 시작'
+                  ? t('m380')
+                  : t('m319')
               }}
             </button>
 
@@ -1994,8 +1998,8 @@ onMounted(() => {
             >
               {{
                 eventActionLoading
-                  ? '처리중...'
-                  : '처리 완료'
+                  ? t('m380')
+                  : t('m322')
               }}
             </button>
 
@@ -2004,7 +2008,7 @@ onMounted(() => {
               v-else
               class="complete-message"
             >
-              ✓ 처리 완료된 이벤트입니다.
+              {{ t('m381') }}
             </span>
 
           </div>
@@ -2021,11 +2025,11 @@ onMounted(() => {
               <div>
 
                 <span class="modal-label">
-                  PROCESS HISTORY
+                  {{ t('m382') }}
                 </span>
 
                 <h3>
-                  처리 이력
+                  {{ t('m323') }}
                 </h3>
 
               </div>
@@ -2036,7 +2040,7 @@ onMounted(() => {
               >
                 {{
                   safeHistories.length
-                }} RECORDS
+                }} {{ t('m363') }}
               </span>
 
             </div>
@@ -2046,7 +2050,7 @@ onMounted(() => {
               v-if="historyLoading"
               class="history-loading"
             >
-              처리 이력을 불러오는 중...
+              {{ t('m383') }}
             </div>
 
 
@@ -2056,7 +2060,7 @@ onMounted(() => {
               "
               class="history-empty"
             >
-              아직 등록된 처리 이력이 없습니다.
+              {{ t('m384') }}
             </div>
 
 
@@ -2134,7 +2138,7 @@ onMounted(() => {
                     class="processor-info"
                   >
                     <span>
-                      담당자
+                      {{ t('m385') }}
                     </span>
 
                     <strong>

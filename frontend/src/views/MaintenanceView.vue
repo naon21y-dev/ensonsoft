@@ -1,15 +1,20 @@
 <script setup>
+import { useI18n } from 'vue-i18n'
+import LanguageSwitcher from '../components/LanguageSwitcher.vue'
+import { useUiMessage } from '../i18n'
+const { t } = useI18n()
+
 import { computed, onMounted, ref, watch } from 'vue'
 import { getSites } from '../api/Site'
 import { getEquipmentsBySite } from '../api/Equipment'
 import { getMaintenances, getMaintenance, createMaintenance, startMaintenanceProcessing, completeMaintenance, getMaintenanceHistories } from '../api/Maintenance'
 
-const statuses = { REPORTED: '접수', IN_PROGRESS: '처리중', COMPLETED: '완료' }
+const statuses = computed(() => ({ REPORTED: t('m087'), IN_PROGRESS: t('m088'), COMPLETED: t('m089') }))
 const maintenances = ref([])
 const loading = ref(false)
 const busy = ref(false)
-const errorMessage = ref('')
-const notice = ref('')
+const errorMessage = useUiMessage()
+const notice = useUiMessage()
 const statusFilter = ref('')
 const createDialog = ref(null)
 const detailDialog = ref(null)
@@ -17,24 +22,24 @@ const sites = ref([])
 const equipments = ref([])
 const sitesLoading = ref(false)
 const equipmentsLoading = ref(false)
-const choicesError = ref('')
-const formError = ref('')
+const choicesError = useUiMessage()
+const formError = useUiMessage()
 const form = ref({ siteId: '', equipmentId: '', title: '', content: '', occurredAt: '' })
 const selected = ref(null)
 const selectedId = ref(null)
 const detailLoading = ref(false)
-const detailError = ref('')
+const detailError = useUiMessage()
 const histories = ref([])
 const historyLoading = ref(false)
-const historyError = ref('')
+const historyError = useUiMessage()
 const result = ref('')
 const arrayData = (response) => Array.isArray(response.data) ? response.data : []
 const message = (error, fallback) => error.response?.data?.message || fallback
 const date = (value) => value ? value.replace('T', ' ').slice(0, 19) : '-'
 const visibleRows = computed(() => maintenances.value.filter(item => !statusFilter.value || item.status === statusFilter.value))
 const kpis = computed(() => [
-  { label: '전체 장애', count: maintenances.value.length },
-  ...Object.entries(statuses).map(([key, label]) => ({ label, count: maintenances.value.filter(item => item.status === key).length }))
+  { label: t('m273'), count: maintenances.value.length },
+  ...Object.entries(statuses.value).map(([key, label]) => ({ label, count: maintenances.value.filter(item => item.status === key).length }))
 ])
 
 async function loadList() {
@@ -42,7 +47,7 @@ async function loadList() {
   loading.value = true
   errorMessage.value = ''
   try { maintenances.value = arrayData(await getMaintenances()) }
-  catch (error) { errorMessage.value = message(error, '장애 목록을 불러오지 못했습니다.') }
+  catch (error) { errorMessage.value = message(error, t('m274')) }
   finally { loading.value = false }
 }
 
@@ -50,7 +55,7 @@ async function loadSites() {
   sitesLoading.value = true
   choicesError.value = ''
   try { sites.value = arrayData(await getSites()) }
-  catch (error) { choicesError.value = message(error, '현장 목록 조회에 실패했습니다.') }
+  catch (error) { choicesError.value = message(error, t('m275')) }
   finally { sitesLoading.value = false }
 }
 
@@ -67,7 +72,7 @@ async function loadEquipments() {
     const response = await getEquipmentsBySite(siteId)
     if (request === equipmentRequest) equipments.value = arrayData(response)
   } catch (error) {
-    if (request === equipmentRequest) choicesError.value = message(error, '장비 목록 조회에 실패했습니다.')
+    if (request === equipmentRequest) choicesError.value = message(error, t('m276'))
   } finally {
     if (request === equipmentRequest) equipmentsLoading.value = false
   }
@@ -94,11 +99,11 @@ function closeCreate() {
 async function submitCreate() {
   if (busy.value || equipmentsLoading.value || sitesLoading.value) return
   if (!equipments.value.some(item => item.id === Number(form.value.equipmentId))) {
-    formError.value = '선택한 현장의 장비를 선택해주세요.'
+    formError.value = t('m277')
     return
   }
   if (!form.value.title.trim() || !form.value.content.trim()) {
-    formError.value = '제목과 장애 내용을 입력해주세요.'
+    formError.value = t('m278')
     return
   }
   busy.value = true
@@ -107,9 +112,9 @@ async function submitCreate() {
     const response = await createMaintenance({ equipmentId: Number(form.value.equipmentId), title: form.value.title.trim(), content: form.value.content.trim(), occurredAt: form.value.occurredAt })
     maintenances.value.unshift(response.data)
     statusFilter.value = ''
-    notice.value = '장애를 접수했습니다.'
+    notice.value = t('m279')
     createDialog.value.close()
-  } catch (error) { formError.value = message(error, '장애 접수에 실패했습니다.') }
+  } catch (error) { formError.value = message(error, t('m280')) }
   finally { busy.value = false }
 }
 
@@ -123,7 +128,7 @@ async function loadHistories() {
     const response = await getMaintenanceHistories(id)
     if (request === detailRequest) histories.value = arrayData(response)
   } catch (error) {
-    if (request === detailRequest) historyError.value = message(error, '처리 이력을 불러오지 못했습니다.')
+    if (request === detailRequest) historyError.value = message(error, t('m281'))
   } finally {
     if (request === detailRequest) historyLoading.value = false
   }
@@ -140,7 +145,7 @@ async function loadDetail() {
     selected.value = response.data
     await loadHistories()
   } catch (error) {
-    if (request === detailRequest) detailError.value = message(error, '장애 상세 정보를 불러오지 못했습니다.')
+    if (request === detailRequest) detailError.value = message(error, t('m282'))
   } finally {
     if (request === detailRequest) detailLoading.value = false
   }
@@ -159,7 +164,7 @@ function closeDetail() {
 async function processMaintenance(complete = false) {
   if (busy.value || !selected.value) return
   if (complete && !result.value.trim()) {
-    detailError.value = '처리 결과를 입력해주세요.'
+    detailError.value = t('m283')
     return
   }
   busy.value = true
@@ -172,9 +177,9 @@ async function processMaintenance(complete = false) {
     const index = maintenances.value.findIndex(item => item.id === response.data.id)
     if (index !== -1) maintenances.value[index] = response.data
     result.value = ''
-    notice.value = complete ? '장애 처리를 완료했습니다.' : '장애 처리를 시작했습니다.'
+    notice.value = complete ? t('m284') : t('m285')
     await loadHistories()
-  } catch (error) { detailError.value = message(error, '처리에 실패했습니다. 상세 정보를 새로고침한 뒤 확인해주세요.') }
+  } catch (error) { detailError.value = message(error, t('m286')) }
   finally { busy.value = false }
 }
 onMounted(loadList)
@@ -183,59 +188,59 @@ onMounted(loadList)
 <template>
   <div class="maintenance-page">
     <header class="page-header">
-      <div><p class="eyebrow">MAINTENANCE MANAGEMENT</p><h1>유지보수 관리</h1><p>현장 장비의 장애를 접수하고 처리 결과를 확인합니다.</p></div>
-      <button class="primary" :disabled="loading || busy" @click="openCreate">+ 장애 접수</button>
+      <div><p class="eyebrow">{{ t('m287') }}</p><h1>{{ t('m288') }}</h1><p>{{ t('m289') }}</p></div>
+      <button class="primary" :disabled="loading || busy" @click="openCreate">{{ t('m290') }}</button>
     </header>
     <p v-if="notice" class="notice" role="status">{{ notice }}</p>
-    <p v-if="errorMessage" class="error" role="alert">{{ errorMessage }} <button :disabled="loading" @click="loadList">다시 조회</button></p>
+    <p v-if="errorMessage" class="error" role="alert">{{ errorMessage }} <button :disabled="loading" @click="loadList">{{ t('m179') }}</button></p>
     <div class="kpi-grid"><div v-for="kpi in kpis" :key="kpi.label" class="kpi-card"><span>{{ kpi.label }}</span><strong>{{ kpi.count }}</strong></div></div>
     <section class="list-panel">
-      <div class="list-header"><h2>장애 목록 <small>{{ visibleRows.length }}건</small></h2><div class="list-controls"><label>상태<select v-model="statusFilter"><option value="">전체 상태</option><option v-for="(label, key) in statuses" :key="key" :value="key">{{ label }}</option></select></label><button :disabled="loading || busy" @click="loadList">새로고침</button></div></div>
-      <p v-if="loading" class="empty" role="status">장애 목록을 불러오는 중입니다...</p>
-      <div v-else class="table-scroll"><table><thead><tr><th>장애 코드</th><th>제목</th><th>현장 / 장비</th><th>상태</th><th>발생 시간</th><th>접수자</th><th>상세</th></tr></thead><tbody>
-        <tr v-for="item in visibleRows" :key="item.id"><td class="code-cell">{{ item.maintenanceCode }}</td><td>{{ item.title }}</td><td>{{ item.siteName }}<br />{{ item.equipmentName }}</td><td><span class="badge" :class="item.status">{{ statuses[item.status] }}</span></td><td>{{ date(item.occurredAt) }}</td><td>{{ item.reportedBy }}</td><td><button @click="openDetail(item)">상세</button></td></tr>
-        <tr v-if="!visibleRows.length"><td colspan="7" class="empty">조회된 장애가 없습니다.</td></tr>
+      <div class="list-header"><h2>{{ t('m291') }} <small>{{ t('counts.items', visibleRows.length) }}</small></h2><div class="list-controls"><label>{{ t('m183') }}<select v-model="statusFilter"><option value="">{{ t('m184') }}</option><option v-for="(label, key) in statuses" :key="key" :value="key">{{ label }}</option></select></label><button :disabled="loading || busy" @click="loadList">{{ t('m128') }}</button></div></div>
+      <p v-if="loading" class="empty" role="status">{{ t('m292') }}</p>
+      <div v-else class="table-scroll"><table><thead><tr><th>{{ t('m293') }}</th><th>{{ t('m042') }}</th><th>{{ t('m294') }}</th><th>{{ t('m183') }}</th><th>{{ t('m295') }}</th><th>{{ t('m147') }}</th><th>{{ t('m192') }}</th></tr></thead><tbody>
+        <tr v-for="item in visibleRows" :key="item.id"><td class="code-cell">{{ item.maintenanceCode }}</td><td>{{ item.title }}</td><td>{{ item.siteName }}<br />{{ item.equipmentName }}</td><td><span class="badge" :class="item.status">{{ statuses[item.status] }}</span></td><td>{{ date(item.occurredAt) }}</td><td>{{ item.reportedBy }}</td><td><button @click="openDetail(item)">{{ t('m192') }}</button></td></tr>
+        <tr v-if="!visibleRows.length"><td colspan="7" class="empty">{{ t('m296') }}</td></tr>
       </tbody></table></div>
     </section>
 
     <dialog ref="createDialog" class="modal" aria-labelledby="create-title" @cancel.prevent="closeCreate">
-      <header class="modal-header"><h2 id="create-title">장애 접수</h2><button :disabled="busy" @click="closeCreate">닫기</button></header>
-      <p class="hint">장애 코드는 자동으로 발급되며, 현재 로그인한 사용자가 접수자로 기록됩니다.</p>
+      <header class="modal-header"><h2 id="create-title">{{ t('m297') }}</h2><LanguageSwitcher /><button :disabled="busy" @click="closeCreate">{{ t('m196') }}</button></header>
+      <p class="hint">{{ t('m298') }}</p>
       <p v-if="formError" class="error" role="alert">{{ formError }}</p>
-      <p v-if="choicesError" class="error" role="alert">{{ choicesError }} <button type="button" :disabled="sitesLoading || equipmentsLoading" @click="form.siteId ? loadEquipments() : loadSites()">다시 조회</button></p>
+      <p v-if="choicesError" class="error" role="alert">{{ choicesError }} <button type="button" :disabled="sitesLoading || equipmentsLoading" @click="form.siteId ? loadEquipments() : loadSites()">{{ t('m179') }}</button></p>
       <form @submit.prevent="submitCreate"><fieldset :disabled="busy"><div class="form-grid">
-        <label>현장 *<select v-model="form.siteId" required :disabled="sitesLoading"><option value="">{{ sitesLoading ? '현장 조회 중...' : '현장 선택' }}</option><option v-for="site in sites" :key="site.id" :value="site.id">{{ site.name }} ({{ site.siteCode }})</option></select></label>
-        <label>장비 *<select v-model="form.equipmentId" required :disabled="!form.siteId || equipmentsLoading"><option value="">{{ equipmentsLoading ? '장비 조회 중...' : '장비 선택' }}</option><option v-for="equipment in equipments" :key="equipment.id" :value="equipment.id">{{ equipment.name }} ({{ equipment.equipmentCode }})</option></select></label>
-        <p v-if="!sitesLoading && !choicesError && !sites.length" class="wide hint">등록된 현장이 없습니다. 현장 관리에서 먼저 등록해주세요.</p>
-        <p v-if="form.siteId && !equipmentsLoading && !choicesError && !equipments.length" class="wide hint">선택한 현장에 등록된 장비가 없습니다.</p>
-        <label class="wide">제목 *<input v-model="form.title" required maxlength="100" placeholder="예: CCTV 영상 수신 불가" /></label>
-        <label class="wide">장애 내용 *<textarea v-model="form.content" required maxlength="2000" rows="4" placeholder="장애 증상과 확인한 내용을 입력해주세요."></textarea></label>
-        <label>발생 시간 *<input v-model="form.occurredAt" required type="datetime-local" step="1" /></label>
-      </div><div class="actions"><button type="button" @click="closeCreate">취소</button><button class="primary" :disabled="sitesLoading || equipmentsLoading || !form.equipmentId">{{ busy ? '접수 중...' : '장애 접수' }}</button></div></fieldset></form>
+        <label>{{ t('m299') }}<select v-model="form.siteId" required :disabled="sitesLoading"><option value="">{{ sitesLoading ? t('m300') : t('m217') }}</option><option v-for="site in sites" :key="site.id" :value="site.id">{{ site.name }} ({{ site.siteCode }})</option></select></label>
+        <label>{{ t('m301') }}<select v-model="form.equipmentId" required :disabled="!form.siteId || equipmentsLoading"><option value="">{{ equipmentsLoading ? t('m302') : t('m303') }}</option><option v-for="equipment in equipments" :key="equipment.id" :value="equipment.id">{{ equipment.name }} ({{ equipment.equipmentCode }})</option></select></label>
+        <p v-if="!sitesLoading && !choicesError && !sites.length" class="wide hint">{{ t('m304') }}</p>
+        <p v-if="form.siteId && !equipmentsLoading && !choicesError && !equipments.length" class="wide hint">{{ t('m305') }}</p>
+        <label class="wide">{{ t('m306') }}<input v-model="form.title" required maxlength="100" :placeholder="t('m307')" /></label>
+        <label class="wide">{{ t('m308') }}<textarea v-model="form.content" required maxlength="2000" rows="4" :placeholder="t('m309')"></textarea></label>
+        <label>{{ t('m310') }}<input v-model="form.occurredAt" required type="datetime-local" step="1" /></label>
+      </div><div class="actions"><button type="button" @click="closeCreate">{{ t('m050') }}</button><button class="primary" :disabled="sitesLoading || equipmentsLoading || !form.equipmentId">{{ busy ? t('m311') : t('m297') }}</button></div></fieldset></form>
     </dialog>
 
     <dialog ref="detailDialog" class="modal" aria-labelledby="detail-title" @cancel.prevent="closeDetail">
-      <header class="modal-header"><h2 id="detail-title">장애 상세</h2><div class="list-controls"><button :disabled="busy || detailLoading" @click="loadDetail">새로고침</button><button :disabled="busy" @click="closeDetail">닫기</button></div></header>
+      <header class="modal-header"><h2 id="detail-title">{{ t('m312') }}</h2><LanguageSwitcher /><div class="list-controls"><button :disabled="busy || detailLoading" @click="loadDetail">{{ t('m128') }}</button><button :disabled="busy" @click="closeDetail">{{ t('m196') }}</button></div></header>
       <p v-if="detailError" class="error" role="alert">{{ detailError }}</p>
-      <p v-if="detailLoading" class="empty">상세 정보를 불러오는 중입니다...</p>
+      <p v-if="detailLoading" class="empty">{{ t('m197') }}</p>
       <template v-else-if="selected">
         <div class="detail-grid">
-          <div class="wide"><span>장애 코드</span>{{ selected.maintenanceCode }}</div>
-          <div><span>현장</span>{{ selected.siteName }} ({{ selected.siteCode }})</div><div><span>장비</span>{{ selected.equipmentName }} ({{ selected.equipmentCode }})</div>
-          <div class="wide"><span>제목</span>{{ selected.title }}</div><div class="wide"><span>내용</span>{{ selected.content }}</div>
-          <div><span>상태</span><b class="badge" :class="selected.status">{{ statuses[selected.status] }}</b></div><div><span>발생 시간</span>{{ date(selected.occurredAt) }}</div>
-          <div><span>접수자</span>{{ selected.reportedBy }}</div><div><span>접수 시간</span>{{ date(selected.reportedAt) }}</div>
-          <div><span>처리 완료 시간</span>{{ date(selected.completedAt) }}</div><div class="wide"><span>처리 결과</span>{{ selected.result || '-' }}</div>
+          <div class="wide"><span>{{ t('m293') }}</span>{{ selected.maintenanceCode }}</div>
+          <div><span>{{ t('m182') }}</span>{{ selected.siteName }} ({{ selected.siteCode }})</div><div><span>{{ t('m313') }}</span>{{ selected.equipmentName }} ({{ selected.equipmentCode }})</div>
+          <div class="wide"><span>{{ t('m042') }}</span>{{ selected.title }}</div><div class="wide"><span>{{ t('m046') }}</span>{{ selected.content }}</div>
+          <div><span>{{ t('m183') }}</span><b class="badge" :class="selected.status">{{ statuses[selected.status] }}</b></div><div><span>{{ t('m295') }}</span>{{ date(selected.occurredAt) }}</div>
+          <div><span>{{ t('m147') }}</span>{{ selected.reportedBy }}</div><div><span>{{ t('m314') }}</span>{{ date(selected.reportedAt) }}</div>
+          <div><span>{{ t('m315') }}</span>{{ date(selected.completedAt) }}</div><div class="wide"><span>{{ t('m316') }}</span>{{ selected.result || '-' }}</div>
         </div>
-        <section v-if="selected.status !== 'COMPLETED'" class="section"><h3>장애 처리</h3>
-          <button v-if="selected.status === 'REPORTED'" class="primary" :disabled="busy" @click="processMaintenance()">{{ busy ? '처리 중...' : '처리 시작' }}</button>
-          <form v-else @submit.prevent="processMaintenance(true)"><label>처리 결과 *<textarea v-model="result" required maxlength="2000" rows="4" :disabled="busy" placeholder="조치한 내용과 결과를 입력해주세요."></textarea></label><div class="actions"><button class="primary" :disabled="busy || !result.trim()">{{ busy ? '저장 중...' : '처리 완료' }}</button></div></form>
+        <section v-if="selected.status !== 'COMPLETED'" class="section"><h3>{{ t('m317') }}</h3>
+          <button v-if="selected.status === 'REPORTED'" class="primary" :disabled="busy" @click="processMaintenance()">{{ busy ? t('m318') : t('m319') }}</button>
+          <form v-else @submit.prevent="processMaintenance(true)"><label>{{ t('m320') }}<textarea v-model="result" required maxlength="2000" rows="4" :disabled="busy" :placeholder="t('m321')"></textarea></label><div class="actions"><button class="primary" :disabled="busy || !result.trim()">{{ busy ? t('m051') : t('m322') }}</button></div></form>
         </section>
-        <section class="section"><h3>처리 이력</h3>
-          <p v-if="historyLoading" class="empty">처리 이력을 불러오는 중입니다...</p>
-          <p v-else-if="historyError" class="error" role="alert">{{ historyError }} <button :disabled="busy" @click="loadHistories">다시 조회</button></p>
-          <p v-else-if="!histories.length" class="empty">처리 이력이 없습니다.</p>
-          <ol v-else class="timeline"><li v-for="history in histories" :key="history.id"><strong>{{ history.previousStatus ? statuses[history.previousStatus] + ' → ' : '' }}{{ statuses[history.newStatus] }}</strong><p>처리자: {{ history.processedBy }} · {{ date(history.processedAt) }}</p><p>{{ history.description }}</p></li></ol>
+        <section class="section"><h3>{{ t('m323') }}</h3>
+          <p v-if="historyLoading" class="empty">{{ t('m324') }}</p>
+          <p v-else-if="historyError" class="error" role="alert">{{ historyError }} <button :disabled="busy" @click="loadHistories">{{ t('m179') }}</button></p>
+          <p v-else-if="!histories.length" class="empty">{{ t('m325') }}</p>
+          <ol v-else class="timeline"><li v-for="history in histories" :key="history.id"><strong>{{ history.previousStatus ? statuses[history.previousStatus] + ' → ' : '' }}{{ statuses[history.newStatus] }}</strong><p>{{ t('m326') }} {{ history.processedBy }} · {{ date(history.processedAt) }}</p><p>{{ history.description }}</p></li></ol>
         </section>
       </template>
     </dialog>

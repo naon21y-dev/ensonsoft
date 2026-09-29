@@ -1,4 +1,9 @@
 <script setup>
+import { useI18n } from 'vue-i18n'
+import { useUiMessage, useFormatLocale } from '../i18n'
+const { t } = useI18n()
+const formatLocale = useFormatLocale()
+
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import api from '../api/api'
@@ -9,7 +14,7 @@ const router = useRouter()
 const authStore = useAuthStore()
 
 const board = ref(null)
-const message = ref('')
+const message = useUiMessage()
 const loading = ref(true)
 const deleting = ref(false)
 
@@ -41,7 +46,7 @@ const getBoard = async () => {
 
     message.value =
       error.response?.data?.message ||
-      '게시글을 불러오지 못했습니다.'
+      t('m013')
   } finally {
     loading.value = false
   }
@@ -64,7 +69,7 @@ const deleteBoard = async () => {
   if (!board.value || deleting.value) return
 
   const confirmed = window.confirm(
-    '게시글을 삭제하시겠습니까?'
+    t('m014')
   )
 
   if (!confirmed) {
@@ -78,7 +83,7 @@ const deleteBoard = async () => {
       `/boards/${board.value.id}`
     )
 
-    alert('게시글이 삭제되었습니다.')
+    alert(t('m015'))
 
     router.push('/boards')
   } catch (error) {
@@ -86,7 +91,7 @@ const deleteBoard = async () => {
 
     message.value =
       error.response?.data?.message ||
-      '게시글 삭제에 실패했습니다.'
+      t('m016')
   } finally {
     deleting.value = false
   }
@@ -102,7 +107,7 @@ const formatDateTime = (date) => {
     return date
   }
 
-  return new Intl.DateTimeFormat('ko-KR', {
+  return new Intl.DateTimeFormat(formatLocale.value, {
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
@@ -126,13 +131,13 @@ onMounted(() => {
       <div>
         <div class="eyebrow">
           <span class="eyebrow-dot"></span>
-          SMART MOBILITY / BOARD
+          {{ t('m017') }}
         </div>
 
-        <h1>게시글 상세</h1>
+        <h1>{{ t('m018') }}</h1>
 
         <p>
-          운영 공지 및 게시글의 상세 내용을 확인하세요.
+          {{ t('m019') }}
         </p>
       </div>
 
@@ -151,7 +156,7 @@ onMounted(() => {
           />
         </svg>
 
-        목록으로
+        {{ t('m020') }}
       </button>
     </section>
 
@@ -178,10 +183,10 @@ onMounted(() => {
     >
       <div class="spinner"></div>
 
-      <strong>게시글을 불러오는 중입니다.</strong>
+      <strong>{{ t('m021') }}</strong>
 
       <p>
-        잠시만 기다려주세요.
+        {{ t('m022') }}
       </p>
     </section>
 
@@ -197,7 +202,7 @@ onMounted(() => {
       <header class="article-header">
 
         <div class="article-number">
-          BOARD
+          {{ t('m023') }}
           <strong>#{{ board.id }}</strong>
         </div>
 
@@ -218,7 +223,7 @@ onMounted(() => {
             </div>
 
             <div class="meta-text">
-              <span>작성자</span>
+              <span>{{ t('m024') }}</span>
               <strong>{{ board.writer }}</strong>
             </div>
           </div>
@@ -239,7 +244,7 @@ onMounted(() => {
             </div>
 
             <div class="meta-text">
-              <span>조회수</span>
+              <span>{{ t('m025') }}</span>
               <strong>
                 {{ board.viewCount ?? 0 }}
               </strong>
@@ -263,7 +268,7 @@ onMounted(() => {
             </div>
 
             <div class="meta-text">
-              <span>작성일</span>
+              <span>{{ t('m026') }}</span>
               <strong>
                 {{ formatDateTime(board.createdAt) }}
               </strong>
@@ -294,7 +299,7 @@ onMounted(() => {
               </div>
 
               <div class="meta-text">
-                <span>수정일</span>
+                <span>{{ t('m027') }}</span>
                 <strong>
                   {{ formatDateTime(board.updatedAt) }}
                 </strong>
@@ -309,7 +314,7 @@ onMounted(() => {
       <!-- 게시글 내용 -->
       <section class="article-content">
         <div class="content-label">
-          CONTENT
+          {{ t('m028') }}
         </div>
 
         <div class="content-body">
@@ -336,7 +341,7 @@ onMounted(() => {
             />
           </svg>
 
-          목록
+          {{ t('m029') }}
         </button>
 
 
@@ -361,7 +366,7 @@ onMounted(() => {
               />
             </svg>
 
-            수정
+            {{ t('m030') }}
           </button>
 
           <button
@@ -381,7 +386,7 @@ onMounted(() => {
               />
             </svg>
 
-            {{ deleting ? '삭제 중...' : '삭제' }}
+            {{ deleting ? t('m031') : t('m032') }}
           </button>
         </div>
 

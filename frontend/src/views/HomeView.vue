@@ -1,7 +1,9 @@
 <script setup>
+
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { setLocale } from '../i18n'
 import { useAuthStore } from '../stores/auth'
 
 import logoWhite from '../assets/logo_w.png'
@@ -17,9 +19,7 @@ const languages = [
 ]
 
 const changeLanguage = (language) => {
-  locale.value = language
-  localStorage.setItem('language', language)
-  document.documentElement.lang = language
+  setLocale(language)
 }
 
 const showOpening = ref(true)
@@ -85,7 +85,7 @@ onBeforeUnmount(() => {
 
         <div class="opening-content">
           <div class="opening-brand">
-            ENSONSOFT
+            {{ t('m272') }}
           </div>
 
           <div class="opening-line"></div>
@@ -109,9 +109,9 @@ onBeforeUnmount(() => {
           </h1>
 
           <div class="opening-meta">
-            <span>SMART MOBILITY</span>
+            <span>{{ t('m239') }}</span>
             <i></i>
-            <span>INTEGRATED CONTROL</span>
+            <span>{{ t('m506') }}</span>
           </div>
         </div>
 
@@ -143,7 +143,7 @@ onBeforeUnmount(() => {
         >
           <img
             :src="logoWhite"
-            alt="엔슨소프트"
+            :alt="t('m232')"
             class="brand-logo"
           />
         </RouterLink>
@@ -220,7 +220,7 @@ onBeforeUnmount(() => {
 
           <div class="hero-eyebrow hero-enter hero-delay-1">
             <span></span>
-            ENSONSOFT SMART MOBILITY
+            {{ t('m229') }}
           </div>
 
 
@@ -307,21 +307,21 @@ onBeforeUnmount(() => {
           <div class="control-header">
             <div>
               <span class="control-eyebrow">
-                SMART MOBILITY
+                {{ t('m239') }}
               </span>
 
               <h2>
-                Integrated Control
+                {{ t('m240') }}
               </h2>
 
               <p>
-                Mobility Management System
+                {{ t('m507') }}
               </p>
             </div>
 
             <div class="live-badge">
               <span></span>
-              LIVE
+              {{ t('m241') }}
             </div>
           </div>
 
@@ -340,12 +340,12 @@ onBeforeUnmount(() => {
             </div>
 
             <div class="control-name">
-              <span>Integrated Monitoring</span>
+              <span>{{ t('m242') }}</span>
               <strong>{{ t('home.control.monitoring') }}</strong>
             </div>
 
             <div class="control-status">
-              NORMAL
+              {{ t('m244') }}
             </div>
           </RouterLink>
 
@@ -361,12 +361,12 @@ onBeforeUnmount(() => {
             </div>
 
             <div class="control-name">
-              <span>Traffic Infrastructure</span>
+              <span>{{ t('m245') }}</span>
               <strong>{{ t('home.control.site') }}</strong>
             </div>
 
             <div class="control-status">
-              ACTIVE
+              {{ t('m247') }}
             </div>
           </RouterLink>
 
@@ -382,12 +382,12 @@ onBeforeUnmount(() => {
             </div>
 
             <div class="control-name">
-              <span>Safety Management</span>
+              <span>{{ t('m248') }}</span>
               <strong>{{ t('home.control.equipment') }}</strong>
             </div>
 
             <div class="control-status">
-              ONLINE
+              {{ t('m250') }}
             </div>
           </RouterLink>
 
@@ -403,12 +403,12 @@ onBeforeUnmount(() => {
             </div>
 
             <div class="control-name">
-              <span>Maintenance Management</span>
+              <span>{{ t('m508') }}</span>
               <strong>{{ t('home.control.maintenance') }}</strong>
             </div>
 
             <div class="control-status">
-              READY
+              {{ t('m509') }}
             </div>
           </RouterLink>
 
@@ -416,22 +416,22 @@ onBeforeUnmount(() => {
           <div class="control-bottom">
 
             <div>
-              <span>SYSTEM</span>
-              <strong>STABLE</strong>
+              <span>{{ t('m260') }}</span>
+              <strong>{{ t('m510') }}</strong>
             </div>
 
             <i></i>
 
             <div>
-              <span>NETWORK</span>
-              <strong>CONNECTED</strong>
+              <span>{{ t('m511') }}</span>
+              <strong>{{ t('m512') }}</strong>
             </div>
 
             <i></i>
 
             <div>
-              <span>SECURITY</span>
-              <strong>ENABLED</strong>
+              <span>{{ t('m513') }}</span>
+              <strong>{{ t('m514') }}</strong>
             </div>
 
           </div>
@@ -453,8 +453,8 @@ onBeforeUnmount(() => {
         </span>
 
         <span class="scroll-text">
-          <small>SMART MOBILITY PLATFORM</small>
-          <strong>SCROLL</strong>
+          <small>{{ t('m251') }}</small>
+          <strong>{{ t('m515') }}</strong>
         </span>
 
         <svg viewBox="0 0 24 24">
@@ -483,7 +483,7 @@ onBeforeUnmount(() => {
           <div>
             <div class="section-eyebrow">
               <span></span>
-              SMART MOBILITY PLATFORM
+              {{ t('m251') }}
             </div>
 
             <h2>
@@ -514,7 +514,7 @@ onBeforeUnmount(() => {
             </div>
 
             <span class="feature-en">
-              INTEGRATED MONITORING
+              {{ t('m516') }}
             </span>
 
             <h3>
@@ -526,7 +526,7 @@ onBeforeUnmount(() => {
             </p>
 
             <div class="feature-link">
-              VIEW SYSTEM
+              {{ t('m517') }}
               <span>→</span>
             </div>
           </RouterLink>
@@ -547,7 +547,7 @@ onBeforeUnmount(() => {
             </div>
 
             <span class="feature-en">
-              SITE MANAGEMENT
+              {{ t('m418') }}
             </span>
 
             <h3>
@@ -559,7 +559,7 @@ onBeforeUnmount(() => {
             </p>
 
             <div class="feature-link">
-              VIEW SYSTEM
+              {{ t('m517') }}
               <span>→</span>
             </div>
           </RouterLink>
@@ -580,7 +580,7 @@ onBeforeUnmount(() => {
             </div>
 
             <span class="feature-en">
-              EQUIPMENT MANAGEMENT
+              {{ t('m175') }}
             </span>
 
             <h3>
@@ -592,7 +592,7 @@ onBeforeUnmount(() => {
             </p>
 
             <div class="feature-link">
-              VIEW SYSTEM
+              {{ t('m517') }}
               <span>→</span>
             </div>
           </RouterLink>
@@ -613,7 +613,7 @@ onBeforeUnmount(() => {
             </div>
 
             <span class="feature-en">
-              MAINTENANCE
+              {{ t('m143') }}
             </span>
 
             <h3>
@@ -625,7 +625,7 @@ onBeforeUnmount(() => {
             </p>
 
             <div class="feature-link">
-              VIEW SYSTEM
+              {{ t('m517') }}
               <span>→</span>
             </div>
           </RouterLink>
@@ -641,7 +641,7 @@ onBeforeUnmount(() => {
           @click="scrollToCompany"
         >
           <span>
-            COMPANY INFORMATION
+            {{ t('m518') }}
           </span>
 
           <strong>
@@ -678,7 +678,7 @@ onBeforeUnmount(() => {
           <div>
             <div class="section-eyebrow">
               <span></span>
-              COMPANY INFORMATION
+              {{ t('m518') }}
             </div>
 
             <h2>
@@ -704,13 +704,13 @@ onBeforeUnmount(() => {
 
             <img
               :src="greetingLogo"
-              alt="엔슨소프트 심볼"
+              :alt="t('m519')"
               class="company-logo"
             />
 
             <div class="company-brand-name">
-              <strong>ENSONSOFT</strong>
-              <span>Ensonsoft Co., Ltd.</span>
+              <strong>{{ t('m272') }}</strong>
+              <span>{{ t('m520') }}</span>
             </div>
 
           </div>
@@ -727,7 +727,7 @@ onBeforeUnmount(() => {
 
             <div class="company-row">
               <span>{{ t('home.company.ceoLabel') }}</span>
-              <strong>차기욱</strong>
+              <strong>{{ t('m521') }}</strong>
             </div>
 
             <div class="company-row">
@@ -741,7 +741,7 @@ onBeforeUnmount(() => {
             </div>
 
             <div class="company-row">
-              <span>FAX</span>
+              <span>{{ t('m522') }}</span>
               <strong>0303-3440-7400</strong>
             </div>
 
@@ -773,18 +773,17 @@ onBeforeUnmount(() => {
           <div>
             <img
               :src="logoWhite"
-              alt="엔슨소프트"
+              :alt="t('m232')"
             />
 
             <p>
-              Smart Mobility · Integrated Control ·
-              Intelligent Video Analysis
+              {{ t('m523') }}
             </p>
           </div>
 
           <div class="company-footer-right">
-            <span>ENSONSOFT CO., LTD.</span>
-            <strong>SMART MOBILITY SOLUTION</strong>
+            <span>{{ t('m524') }}</span>
+            <strong>{{ t('m525') }}</strong>
           </div>
 
         </div>

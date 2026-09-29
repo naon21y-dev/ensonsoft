@@ -1,4 +1,8 @@
 <script setup>
+import { useI18n } from 'vue-i18n'
+import { useUiMessage } from '../i18n'
+const { t } = useI18n()
+
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
@@ -10,18 +14,18 @@ const authStore = useAuthStore()
 
 const username = ref('')
 const password = ref('')
-const message = ref('')
+const message = useUiMessage()
 const loading = ref(false)
 const showPassword = ref(false)
 
 const login = async () => {
   if (!username.value.trim()) {
-    message.value = '아이디를 입력해주세요.'
+    message.value = t('m253')
     return
   }
 
   if (!password.value) {
-    message.value = '비밀번호를 입력해주세요.'
+    message.value = t('m254')
     return
   }
 
@@ -40,7 +44,7 @@ const login = async () => {
 
     message.value =
       error.response?.data?.message ||
-      '아이디 또는 비밀번호를 확인해주세요.'
+      t('m255')
   } finally {
     loading.value = false
   }
@@ -84,7 +88,7 @@ const goSignup = () => {
             <path d="M19 12H5M11 18l-6-6 6-6" />
           </svg>
 
-          <span>INTRO</span>
+          <span>{{ t('m256') }}</span>
         </button>
 
 
@@ -92,17 +96,16 @@ const goSignup = () => {
 
           <div class="eyebrow">
             <span class="eyebrow-line"></span>
-            ENSONSOFT SMART MOBILITY
+            {{ t('m229') }}
           </div>
 
           <h1>
-            더 안전한 이동을 위한
-            <strong>스마트 모빌리티</strong>
+            {{ t('m257') }}
+            <strong>{{ t('m258') }}</strong>
           </h1>
 
           <p>
-            교통 인프라와 실시간 데이터를 하나의 플랫폼에서
-            통합 관리하는 스마트 모빌리티 운영 시스템입니다.
+            {{ t('m259') }}
           </p>
 
         </div>
@@ -115,8 +118,8 @@ const goSignup = () => {
             <span class="state-dot"></span>
 
             <div>
-              <small>SYSTEM</small>
-              <strong>ONLINE</strong>
+              <small>{{ t('m260') }}</small>
+              <strong>{{ t('m250') }}</strong>
             </div>
           </div>
 
@@ -124,8 +127,8 @@ const goSignup = () => {
 
           <div class="state-item">
             <div>
-              <small>PLATFORM</small>
-              <strong>SMART MOBILITY</strong>
+              <small>{{ t('m261') }}</small>
+              <strong>{{ t('m239') }}</strong>
             </div>
           </div>
 
@@ -152,7 +155,7 @@ const goSignup = () => {
         >
           <img
             :src="logoBlue"
-            alt="엔슨소프트"
+            :alt="t('m232')"
             class="login-logo"
           />
         </button>
@@ -162,15 +165,15 @@ const goSignup = () => {
         <div class="login-heading">
 
           <span class="login-label">
-            WELCOME BACK
+            {{ t('m262') }}
           </span>
 
           <h2>
-            로그인
+            {{ t('m226') }}
           </h2>
 
           <p>
-            스마트 모빌리티 통합 관리 시스템에 접속합니다.
+            {{ t('m263') }}
           </p>
 
         </div>
@@ -186,7 +189,7 @@ const goSignup = () => {
           <div class="field">
 
             <label for="username">
-              아이디
+              {{ t('m264') }}
             </label>
 
             <div class="input-box">
@@ -205,7 +208,7 @@ const goSignup = () => {
                 id="username"
                 v-model="username"
                 type="text"
-                placeholder="아이디를 입력해주세요"
+                :placeholder="t('m265')"
                 autocomplete="username"
                 :disabled="loading"
               />
@@ -221,11 +224,11 @@ const goSignup = () => {
             <div class="label-row">
 
               <label for="password">
-                비밀번호
+                {{ t('m266') }}
               </label>
 
               <span class="password-help">
-                PASSWORD
+                {{ t('m267') }}
               </span>
 
             </div>
@@ -248,7 +251,7 @@ const goSignup = () => {
                 id="password"
                 v-model="password"
                 :type="showPassword ? 'text' : 'password'"
-                placeholder="비밀번호를 입력해주세요"
+                :placeholder="t('m268')"
                 autocomplete="current-password"
                 :disabled="loading"
               />
@@ -318,14 +321,14 @@ const goSignup = () => {
 
               <span class="spinner"></span>
 
-              로그인 중...
+              {{ t('m269') }}
 
             </template>
 
             <template v-else>
 
               <span>
-                로그인
+                {{ t('m226') }}
               </span>
 
               <svg viewBox="0 0 24 24">
@@ -343,14 +346,14 @@ const goSignup = () => {
         <div class="signup-area">
 
           <span>
-            아직 계정이 없으신가요?
+            {{ t('m270') }}
           </span>
 
           <button
             type="button"
             @click="goSignup"
           >
-            회원가입
+            {{ t('m227') }}
           </button>
 
         </div>
@@ -362,13 +365,13 @@ const goSignup = () => {
           <span class="security-dot"></span>
 
           <span>
-            SECURE ACCESS
+            {{ t('m271') }}
           </span>
 
           <span class="footer-divider"></span>
 
           <span>
-            ENSONSOFT
+            {{ t('m272') }}
           </span>
 
         </div>

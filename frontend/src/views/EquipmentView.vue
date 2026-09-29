@@ -1,38 +1,42 @@
 <script setup>
+import { useI18n } from 'vue-i18n'
+import { useUiMessage } from '../i18n'
+const { t } = useI18n()
+
 import { computed, onMounted, ref } from 'vue'
 import { getSites } from '../api/Site'
 import { getEquipments, getEquipment, getEquipmentHistories, createEquipment, updateEquipment, updateEquipmentStatus, deleteEquipment } from '../api/Equipment'
 
-const statuses = { NORMAL: '정상', WARNING: '주의', ERROR: '장애', MAINTENANCE: '점검중', OFFLINE: '오프라인', INACTIVE: '운영 중지' }
-const types = { CCTV: 'CCTV', LPR_CAMERA: '차량번호 인식 카메라', VEHICLE_DETECTOR: '차량 검지기', TOLL_EQUIPMENT: '요금 징수 장비', VMS: '도로 전광판', NETWORK: '네트워크', SERVER: '서버', ETC: '기타' }
+const statuses = computed(() => ({ NORMAL: t('m081'), WARNING: t('m082'), ERROR: t('m083'), MAINTENANCE: t('m084'), OFFLINE: t('m085'), INACTIVE: t('m086') }))
+const types = computed(() => ({ CCTV: 'CCTV', LPR_CAMERA: t('m152'), VEHICLE_DETECTOR: t('m153'), TOLL_EQUIPMENT: t('m154'), VMS: t('m155'), NETWORK: t('m156'), SERVER: t('m157'), ETC: t('m096') }))
 const equipments = ref([])
 const allEquipments = ref([])
 const sites = ref([])
 const loading = ref(false)
 const busy = ref(false)
-const errorMessage = ref('')
-const notice = ref('')
+const errorMessage = useUiMessage()
+const notice = useUiMessage()
 const filters = ref({ name: '', siteId: '', status: '', equipmentType: '' })
 const selected = ref(null)
 const histories = ref([])
 const detailOpen = ref(false)
 const detailLoading = ref(false)
-const detailError = ref('')
-const historyError = ref('')
+const detailError = useUiMessage()
+const historyError = useUiMessage()
 const newStatus = ref('')
 const reason = ref('')
 const formOpen = ref(false)
 const editingId = ref(null)
-const formError = ref('')
+const formError = useUiMessage()
 const emptyForm = () => ({ siteId: '', equipmentCode: '', name: '', equipmentType: 'CCTV', manufacturer: '', modelName: '', serialNumber: '', installLocation: '', installedAt: '', ipAddress: '', description: '' })
 const form = ref(emptyForm())
-const optionalFields = [ ['manufacturer', '제조사', 100], ['modelName', '모델', 100], ['serialNumber', '시리얼 번호', 100], ['installLocation', '설치 위치', 200], ['ipAddress', 'IP 주소', 45] ]
+const optionalFields = computed(() => ([ ['manufacturer', t('m158'), 100], ['modelName', t('m159'), 100], ['serialNumber', t('m160'), 100], ['installLocation', t('m161'), 200], ['ipAddress', t('m162'), 45] ]))
 const arrayData = (response) => Array.isArray(response.data) ? response.data : []
 const message = (error, fallback) => error.response?.data?.message || fallback
 const date = (value) => value ? value.replace('T', ' ').slice(0, 19) : '-'
 const kpis = computed(() => [
-  { label: '전체 장비', count: allEquipments.value.length },
-  ...Object.entries(statuses).filter(([key]) => key !== 'INACTIVE').map(([key, label]) => ({ label, count: allEquipments.value.filter(e => e.status === key).length }))
+  { label: t('m102'), count: allEquipments.value.length },
+  ...Object.entries(statuses.value).filter(([key]) => key !== 'INACTIVE').map(([key, label]) => ({ label, count: allEquipments.value.filter(e => e.status === key).length }))
 ])
 
 let listRequest = 0
@@ -45,7 +49,7 @@ async function loadList() {
     const response = await getEquipments(params)
     if (request === listRequest) equipments.value = arrayData(response)
   } catch (error) {
-    if (request === listRequest) errorMessage.value = message(error, '장비 목록을 불러오지 못했습니다.')
+    if (request === listRequest) errorMessage.value = message(error, t('m163'))
   } finally {
     if (request === listRequest) loading.value = false
   }
@@ -57,7 +61,7 @@ async function refresh() {
     allEquipments.value = arrayData(equipmentResponse)
     sites.value = arrayData(siteResponse)
   } catch (error) {
-    errorMessage.value = message(error, '전체 장비 및 현장 정보를 불러오지 못했습니다.')
+    errorMessage.value = message(error, t('m164'))
   }
 }
 function resetSearch() {
@@ -71,7 +75,7 @@ async function loadHistories(id) {
     const response = await getEquipmentHistories(id)
     if (selected.value?.id === id) histories.value = arrayData(response)
   } catch (error) {
-    if (selected.value?.id === id) historyError.value = message(error, '이력 조회에 실패했습니다. 다시 조회해주세요.')
+    if (selected.value?.id === id) historyError.value = message(error, t('m165'))
   }
 }
 async function openDetail(equipment) {
@@ -90,7 +94,7 @@ async function openDetail(equipment) {
     selected.value = response.data
     await loadHistories(equipment.id)
   } catch (error) {
-    if (request === detailRequest) detailError.value = message(error, '장비 상세 조회에 실패했습니다.')
+    if (request === detailRequest) detailError.value = message(error, t('m166'))
   } finally {
     if (request === detailRequest) detailLoading.value = false
   }
@@ -121,10 +125,10 @@ async function save() {
     const response = editingId.value ? await updateEquipment(editingId.value, payload) : await createEquipment(payload)
     if (selected.value?.id === response.data.id) selected.value = response.data
     formOpen.value = false
-    notice.value = editingId.value ? '장비 정보를 수정했습니다.' : '장비를 등록했습니다.'
+    notice.value = editingId.value ? t('m167') : t('m168')
     await refresh()
   } catch (error) {
-    formError.value = message(error, '장비 저장에 실패했습니다.')
+    formError.value = message(error, t('m169'))
   } finally { busy.value = false }
 }
 async function changeStatus() {
@@ -136,23 +140,23 @@ async function changeStatus() {
     selected.value = response.data
     newStatus.value = ''
     reason.value = ''
-    notice.value = '장비 상태를 변경했습니다.'
+    notice.value = t('m170')
     await loadHistories(response.data.id)
     await refresh()
-  } catch (error) { detailError.value = message(error, '상태 변경에 실패했습니다.') }
+  } catch (error) { detailError.value = message(error, t('m171')) }
   finally { busy.value = false }
 }
 async function removeEquipment() {
-  if (busy.value || !selected.value || !window.confirm('장비와 해당 상태 변경 이력을 삭제하시겠습니까?')) return
+  if (busy.value || !selected.value || !window.confirm(t('m172'))) return
   busy.value = true
   detailError.value = ''
   try {
     await deleteEquipment(selected.value.id)
     detailOpen.value = false
     selected.value = null
-    notice.value = '장비를 삭제했습니다.'
+    notice.value = t('m173')
     await refresh()
-  } catch (error) { detailError.value = message(error, '장비 삭제에 실패했습니다.') }
+  } catch (error) { detailError.value = message(error, t('m174')) }
   finally { busy.value = false }
 }
 onMounted(refresh)
@@ -161,50 +165,50 @@ onMounted(refresh)
 <template>
   <div class="equipment-page">
     <header class="page-header">
-      <div><p class="eyebrow">EQUIPMENT MANAGEMENT</p><h1>장비 관리</h1><p>현장별 장비의 운영 상태와 변경 이력을 관리합니다.</p></div>
-      <button class="primary" :disabled="busy" @click="openForm()">+ 장비 등록</button>
+      <div><p class="eyebrow">{{ t('m175') }}</p><h1>{{ t('m176') }}</h1><p>{{ t('m177') }}</p></div>
+      <button class="primary" :disabled="busy" @click="openForm()">{{ t('m178') }}</button>
     </header>
     <p v-if="notice" class="notice" role="status">{{ notice }}</p>
-    <div v-if="errorMessage" class="error" role="alert">{{ errorMessage }} <button @click="refresh">다시 조회</button></div>
+    <div v-if="errorMessage" class="error" role="alert">{{ errorMessage }} <button @click="refresh">{{ t('m179') }}</button></div>
     <div class="kpi-grid"><div v-for="kpi in kpis" :key="kpi.label" class="kpi-card"><span>{{ kpi.label }}</span><strong>{{ kpi.count }}</strong></div></div>
     <form class="search-panel" @submit.prevent="loadList">
-      <label>장비명<input v-model="filters.name" placeholder="장비명 검색" maxlength="100" /></label>
-      <label>현장<select v-model="filters.siteId"><option value="">전체 현장</option><option v-for="site in sites" :key="site.id" :value="site.id">{{ site.name }} ({{ site.siteCode }})</option></select></label>
-      <label>상태<select v-model="filters.status"><option value="">전체 상태</option><option v-for="(label, key) in statuses" :key="key" :value="key">{{ label }}</option></select></label>
-      <label>유형<select v-model="filters.equipmentType"><option value="">전체 유형</option><option v-for="(label, key) in types" :key="key" :value="key">{{ label }}</option></select></label>
-      <button class="primary" :disabled="loading">검색</button><button type="button" @click="resetSearch">초기화</button>
+      <label>{{ t('m180') }}<input v-model="filters.name" :placeholder="t('m181')" maxlength="100" /></label>
+      <label>{{ t('m182') }}<select v-model="filters.siteId"><option value="">{{ t('m099') }}</option><option v-for="site in sites" :key="site.id" :value="site.id">{{ site.name }} ({{ site.siteCode }})</option></select></label>
+      <label>{{ t('m183') }}<select v-model="filters.status"><option value="">{{ t('m184') }}</option><option v-for="(label, key) in statuses" :key="key" :value="key">{{ label }}</option></select></label>
+      <label>{{ t('m185') }}<select v-model="filters.equipmentType"><option value="">{{ t('m186') }}</option><option v-for="(label, key) in types" :key="key" :value="key">{{ label }}</option></select></label>
+      <button class="primary" :disabled="loading">{{ t('m060') }}</button><button type="button" @click="resetSearch">{{ t('m061') }}</button>
     </form>
     <section class="list-panel" :aria-busy="loading">
-      <h2>장비 목록 <small>{{ equipments.length }}건</small></h2>
-      <p v-if="loading" class="empty">장비 정보를 불러오는 중입니다...</p>
-      <div v-else class="table-scroll"><table><thead><tr><th>장비 코드</th><th>장비명</th><th>소속 현장</th><th>유형</th><th>설치 위치</th><th>IP</th><th>상태</th><th>상세</th></tr></thead>
-        <tbody><tr v-for="equipment in equipments" :key="equipment.id"><td>{{ equipment.equipmentCode }}</td><td>{{ equipment.name }}</td><td>{{ equipment.siteName }}</td><td>{{ types[equipment.equipmentType] }}</td><td>{{ equipment.installLocation || '-' }}</td><td>{{ equipment.ipAddress || '-' }}</td><td><span class="badge" :class="equipment.status">{{ statuses[equipment.status] }}</span></td><td><button @click="openDetail(equipment)">상세</button></td></tr>
-        <tr v-if="!equipments.length"><td colspan="8" class="empty">조회된 장비가 없습니다. 검색 조건을 변경하거나 장비를 등록해주세요.</td></tr></tbody></table></div>
+      <h2>{{ t('m187') }} <small>{{ t('counts.items', equipments.length) }}</small></h2>
+      <p v-if="loading" class="empty">{{ t('m188') }}</p>
+      <div v-else class="table-scroll"><table><thead><tr><th>{{ t('m189') }}</th><th>{{ t('m180') }}</th><th>{{ t('m190') }}</th><th>{{ t('m185') }}</th><th>{{ t('m161') }}</th><th>{{ t('m191') }}</th><th>{{ t('m183') }}</th><th>{{ t('m192') }}</th></tr></thead>
+        <tbody><tr v-for="equipment in equipments" :key="equipment.id"><td>{{ equipment.equipmentCode }}</td><td>{{ equipment.name }}</td><td>{{ equipment.siteName }}</td><td>{{ types[equipment.equipmentType] }}</td><td>{{ equipment.installLocation || '-' }}</td><td>{{ equipment.ipAddress || '-' }}</td><td><span class="badge" :class="equipment.status">{{ statuses[equipment.status] }}</span></td><td><button @click="openDetail(equipment)">{{ t('m192') }}</button></td></tr>
+        <tr v-if="!equipments.length"><td colspan="8" class="empty">{{ t('m193') }}</td></tr></tbody></table></div>
     </section>
 
     <div v-if="detailOpen" class="overlay" @click.self="closeDetail">
       <section class="modal" role="dialog" aria-modal="true" aria-labelledby="detail-title" @keydown.esc="closeDetail">
-        <header class="modal-header"><h2 id="detail-title">장비 상세</h2><button :disabled="busy" aria-label="상세 닫기" @click="closeDetail">닫기</button></header>
-        <p v-if="detailLoading" class="empty">상세 정보를 불러오는 중입니다...</p>
+        <header class="modal-header"><h2 id="detail-title">{{ t('m194') }}</h2><button :disabled="busy" :aria-label="t('m195')" @click="closeDetail">{{ t('m196') }}</button></header>
+        <p v-if="detailLoading" class="empty">{{ t('m197') }}</p>
         <p v-if="detailError" class="error" role="alert">{{ detailError }}</p>
         <template v-if="selected && !detailLoading">
           <div class="detail-grid">
-            <div><span>장비 코드</span>{{ selected.equipmentCode }}</div><div><span>장비명</span>{{ selected.name }}</div>
-            <div><span>소속 현장</span>{{ selected.siteName }} ({{ selected.siteCode }})</div><div><span>유형</span>{{ types[selected.equipmentType] }}</div>
+            <div><span>{{ t('m189') }}</span>{{ selected.equipmentCode }}</div><div><span>{{ t('m180') }}</span>{{ selected.name }}</div>
+            <div><span>{{ t('m190') }}</span>{{ selected.siteName }} ({{ selected.siteCode }})</div><div><span>{{ t('m185') }}</span>{{ types[selected.equipmentType] }}</div>
             <div v-for="[key, label] in optionalFields" :key="key"><span>{{ label }}</span>{{ selected[key] || '-' }}</div>
-            <div><span>설치일</span>{{ date(selected.installedAt) }}</div><div><span>현재 상태</span><b class="badge" :class="selected.status">{{ statuses[selected.status] }}</b></div>
-            <div><span>등록일 / 수정일</span>{{ date(selected.createdAt) }} / {{ date(selected.updatedAt) }}</div>
-            <div class="wide"><span>설명</span>{{ selected.description || '-' }}</div>
+            <div><span>{{ t('m198') }}</span>{{ date(selected.installedAt) }}</div><div><span>{{ t('m199') }}</span><b class="badge" :class="selected.status">{{ statuses[selected.status] }}</b></div>
+            <div><span>{{ t('m200') }}</span>{{ date(selected.createdAt) }} / {{ date(selected.updatedAt) }}</div>
+            <div class="wide"><span>{{ t('m201') }}</span>{{ selected.description || '-' }}</div>
           </div>
-          <div class="actions"><button :disabled="busy" @click="openForm(selected)">장비 수정</button><button class="danger" :disabled="busy" @click="removeEquipment">장비 삭제</button></div>
-          <section class="section"><h3>상태 변경</h3><form class="status-form" @submit.prevent="changeStatus">
-            <label>변경 상태<select v-model="newStatus" required :disabled="busy"><option value="">상태 선택</option><option v-for="(label, key) in statuses" :key="key" :value="key" :disabled="key === selected.status">{{ label }}</option></select></label>
-            <label>변경 사유<input v-model="reason" maxlength="500" placeholder="예: 통신장애" :disabled="busy" /></label><button class="primary" :disabled="busy || !newStatus || newStatus === selected.status">상태 변경</button>
+          <div class="actions"><button :disabled="busy" @click="openForm(selected)">{{ t('m202') }}</button><button class="danger" :disabled="busy" @click="removeEquipment">{{ t('m203') }}</button></div>
+          <section class="section"><h3>{{ t('m204') }}</h3><form class="status-form" @submit.prevent="changeStatus">
+            <label>{{ t('m205') }}<select v-model="newStatus" required :disabled="busy"><option value="">{{ t('m206') }}</option><option v-for="(label, key) in statuses" :key="key" :value="key" :disabled="key === selected.status">{{ label }}</option></select></label>
+            <label>{{ t('m207') }}<input v-model="reason" maxlength="500" :placeholder="t('m208')" :disabled="busy" /></label><button class="primary" :disabled="busy || !newStatus || newStatus === selected.status">{{ t('m204') }}</button>
           </form></section>
-          <section class="section"><h3>상태 변경 이력</h3>
-            <p v-if="historyError" class="error" role="alert">{{ historyError }} <button @click="loadHistories(selected.id)">다시 조회</button></p>
-            <p v-else-if="!histories.length" class="empty">상태 변경 이력이 없습니다.</p>
-            <ol class="timeline"><li v-for="history in histories" :key="history.id"><strong>{{ statuses[history.previousStatus] }} → {{ statuses[history.newStatus] }}</strong><p>변경자: {{ history.changedBy }} · {{ date(history.changedAt) }}</p><p>{{ history.reason || '변경 사유 없음' }}</p></li></ol>
+          <section class="section"><h3>{{ t('m209') }}</h3>
+            <p v-if="historyError" class="error" role="alert">{{ historyError }} <button @click="loadHistories(selected.id)">{{ t('m179') }}</button></p>
+            <p v-else-if="!histories.length" class="empty">{{ t('m210') }}</p>
+            <ol class="timeline"><li v-for="history in histories" :key="history.id"><strong>{{ statuses[history.previousStatus] }} → {{ statuses[history.newStatus] }}</strong><p>{{ t('m211') }} {{ history.changedBy }} · {{ date(history.changedAt) }}</p><p>{{ history.reason || t('m212') }}</p></li></ol>
           </section>
         </template>
       </section>
@@ -212,18 +216,18 @@ onMounted(refresh)
 
     <div v-if="formOpen" class="overlay form-overlay" @click.self="!busy && (formOpen = false)">
       <section class="modal" role="dialog" aria-modal="true" aria-labelledby="form-title" @keydown.esc="!busy && (formOpen = false)">
-        <header class="modal-header"><h2 id="form-title">{{ editingId ? '장비 수정' : '장비 등록' }}</h2><button :disabled="busy" @click="formOpen = false">닫기</button></header>
+        <header class="modal-header"><h2 id="form-title">{{ editingId ? t('m202') : t('m213') }}</h2><button :disabled="busy" @click="formOpen = false">{{ t('m196') }}</button></header>
         <p v-if="formError" class="error" role="alert">{{ formError }}</p>
-        <p v-if="!sites.length" class="error">선택할 현장이 없습니다. 현장 등록 또는 조회 상태를 확인해주세요. <RouterLink to="/sites">현장 관리</RouterLink></p>
+        <p v-if="!sites.length" class="error">{{ t('m214') }} <RouterLink to="/sites">{{ t('m215') }}</RouterLink></p>
         <form @submit.prevent="save"><fieldset :disabled="busy"><div class="form-grid">
-          <label>소속 현장 *<select v-model="form.siteId" required><option value="">현장 선택</option><option v-for="site in sites" :key="site.id" :value="site.id">{{ site.name }} ({{ site.siteCode }})</option></select></label>
-          <label>장비 코드 *<input v-model="form.equipmentCode" required maxlength="30" :disabled="!!editingId" placeholder="EQ-001" /></label>
-          <label>장비명 *<input v-model="form.name" required maxlength="100" /></label>
-          <label>장비 유형 *<select v-model="form.equipmentType" required><option v-for="(label, key) in types" :key="key" :value="key">{{ label }}</option></select></label>
+          <label>{{ t('m216') }}<select v-model="form.siteId" required><option value="">{{ t('m217') }}</option><option v-for="site in sites" :key="site.id" :value="site.id">{{ site.name }} ({{ site.siteCode }})</option></select></label>
+          <label>{{ t('m218') }}<input v-model="form.equipmentCode" required maxlength="30" :disabled="!!editingId" :placeholder="t('m219')" /></label>
+          <label>{{ t('m220') }}<input v-model="form.name" required maxlength="100" /></label>
+          <label>{{ t('m221') }}<select v-model="form.equipmentType" required><option v-for="(label, key) in types" :key="key" :value="key">{{ label }}</option></select></label>
           <label v-for="[key, label, max] in optionalFields" :key="key">{{ label }}<input v-model="form[key]" :maxlength="max" /></label>
-          <label>설치일<input v-model="form.installedAt" type="datetime-local" step="1" /></label>
-          <label class="wide">설명<textarea v-model="form.description" maxlength="500" rows="3"></textarea></label>
-        </div><div class="actions"><button type="button" @click="formOpen = false">취소</button><button class="primary" :disabled="!sites.length">{{ busy ? '저장 중...' : '저장' }}</button></div></fieldset></form>
+          <label>{{ t('m198') }}<input v-model="form.installedAt" type="datetime-local" step="1" /></label>
+          <label class="wide">{{ t('m201') }}<textarea v-model="form.description" maxlength="500" rows="3"></textarea></label>
+        </div><div class="actions"><button type="button" @click="formOpen = false">{{ t('m050') }}</button><button class="primary" :disabled="!sites.length">{{ busy ? t('m051') : t('m222') }}</button></div></fieldset></form>
       </section>
     </div>
   </div>

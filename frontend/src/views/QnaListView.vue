@@ -1,4 +1,9 @@
 <script setup>
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
+import { useUiMessage, useFormatLocale } from '../i18n'
+const formatLocale = useFormatLocale()
+
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { getQnaList } from '../api/Qna'
@@ -7,21 +12,21 @@ const router = useRouter()
 
 const qnaList = ref([])
 const loading = ref(false)
-const errorMessage = ref('')
+const errorMessage = useUiMessage()
 
 const keyword = ref('')
 const statusFilter = ref('ALL')
 const categoryFilter = ref('ALL')
 
-const categoryLabels = {
-  GENERAL: '일반 문의',
-  SITE: '현장 문의',
-  EQUIPMENT: '장비 문의',
-  VEHICLE: '차량번호 인식',
-  VIDEO_ANALYSIS: '영상분석',
-  MAINTENANCE: '유지보수',
-  ETC: '기타'
-}
+const categoryLabels = computed(() => ({
+  GENERAL: t('m551'),
+  SITE: t('m552'),
+  EQUIPMENT: t('m553'),
+  VEHICLE: t('m342'),
+  VIDEO_ANALYSIS: t('m554'),
+  MAINTENANCE: t('m555'),
+  ETC: t('m096')
+}))
 
 const loadQna = async () => {
   loading.value = true
@@ -34,7 +39,7 @@ const loadQna = async () => {
     console.error(error)
     errorMessage.value =
       error.response?.data?.message ||
-      '문의 목록을 불러오지 못했습니다.'
+      t('m556')
   } finally {
     loading.value = false
   }
@@ -78,7 +83,7 @@ const filteredQna = computed(() => {
 const formatDate = (value) => {
   if (!value) return '-'
 
-  return new Intl.DateTimeFormat('ko-KR', {
+  return new Intl.DateTimeFormat(formatLocale.value, {
     year: 'numeric',
     month: '2-digit',
     day: '2-digit'
@@ -101,44 +106,43 @@ onMounted(loadQna)
 
     <header class="page-header">
       <div>
-        <span class="eyebrow">CUSTOMER SUPPORT</span>
-        <h1>Q&A 문의</h1>
+        <span class="eyebrow">{{ t('m557') }}</span>
+        <h1>{{ t('m558') }}</h1>
         <p>
-          시스템 이용 중 발생한 문의사항을 등록하고
-          답변 상태를 확인할 수 있습니다.
+          {{ t('m559') }}
         </p>
       </div>
 
       <button class="write-button" @click="goWrite">
         <span>＋</span>
-        문의하기
+        {{ t('m560') }}
       </button>
     </header>
 
     <!-- KPI -->
     <section class="stats-grid">
       <article class="stat-card">
-        <span>전체 문의</span>
+        <span>{{ t('m561') }}</span>
         <strong>{{ totalCount }}</strong>
-        <small>등록된 전체 문의</small>
+        <small>{{ t('m562') }}</small>
       </article>
 
       <article class="stat-card waiting">
-        <span>답변 대기</span>
+        <span>{{ t('m563') }}</span>
         <strong>{{ waitingCount }}</strong>
-        <small>확인이 필요한 문의</small>
+        <small>{{ t('m564') }}</small>
       </article>
 
       <article class="stat-card answered">
-        <span>답변 완료</span>
+        <span>{{ t('m565') }}</span>
         <strong>{{ answeredCount }}</strong>
-        <small>처리가 완료된 문의</small>
+        <small>{{ t('m566') }}</small>
       </article>
 
       <article class="stat-card secret">
-        <span>비공개 문의</span>
+        <span>{{ t('m567') }}</span>
         <strong>{{ secretCount }}</strong>
-        <small>작성자 전용 문의</small>
+        <small>{{ t('m568') }}</small>
       </article>
     </section>
 
@@ -151,8 +155,8 @@ onMounted(loadQna)
 
       <div class="panel-header">
         <div>
-          <h2>문의 목록</h2>
-          <p>총 {{ filteredQna.length }}개의 문의가 있습니다.</p>
+          <h2>{{ t('m569') }}</h2>
+          <p>{{ t('counts.inquiries', filteredQna.length) }}</p>
         </div>
 
         <div class="filters">
@@ -162,25 +166,25 @@ onMounted(loadQna)
             <input
               v-model="keyword"
               type="text"
-              placeholder="제목 또는 작성자 검색"
+              :placeholder="t('m571')"
             />
           </div>
 
           <select v-model="statusFilter">
-            <option value="ALL">전체 상태</option>
-            <option value="WAITING">답변 대기</option>
-            <option value="ANSWERED">답변 완료</option>
+            <option value="ALL">{{ t('m184') }}</option>
+            <option value="WAITING">{{ t('m563') }}</option>
+            <option value="ANSWERED">{{ t('m565') }}</option>
           </select>
 
           <select v-model="categoryFilter">
-            <option value="ALL">전체 유형</option>
-            <option value="GENERAL">일반 문의</option>
-            <option value="SITE">현장 문의</option>
-            <option value="EQUIPMENT">장비 문의</option>
-            <option value="VEHICLE">차량번호 인식</option>
-            <option value="VIDEO_ANALYSIS">영상분석</option>
-            <option value="MAINTENANCE">유지보수</option>
-            <option value="ETC">기타</option>
+            <option value="ALL">{{ t('m186') }}</option>
+            <option value="GENERAL">{{ t('m551') }}</option>
+            <option value="SITE">{{ t('m552') }}</option>
+            <option value="EQUIPMENT">{{ t('m553') }}</option>
+            <option value="VEHICLE">{{ t('m342') }}</option>
+            <option value="VIDEO_ANALYSIS">{{ t('m554') }}</option>
+            <option value="MAINTENANCE">{{ t('m555') }}</option>
+            <option value="ETC">{{ t('m096') }}</option>
           </select>
         </div>
       </div>
@@ -188,7 +192,7 @@ onMounted(loadQna)
       <!-- 로딩 -->
       <div v-if="loading" class="state-box">
         <div class="spinner"></div>
-        <strong>문의 목록을 불러오고 있습니다.</strong>
+        <strong>{{ t('m572') }}</strong>
       </div>
 
       <!-- 빈 목록 -->
@@ -197,8 +201,8 @@ onMounted(loadQna)
         class="state-box"
       >
         <div class="empty-icon">?</div>
-        <strong>등록된 문의가 없습니다.</strong>
-        <span>새로운 문의를 작성해보세요.</span>
+        <strong>{{ t('m573') }}</strong>
+        <span>{{ t('m574') }}</span>
       </div>
 
       <!-- 데스크톱 -->
@@ -206,11 +210,11 @@ onMounted(loadQna)
         <table>
           <thead>
             <tr>
-              <th>상태</th>
-              <th>유형</th>
-              <th>제목</th>
-              <th>작성자</th>
-              <th>작성일</th>
+              <th>{{ t('m183') }}</th>
+              <th>{{ t('m185') }}</th>
+              <th>{{ t('m042') }}</th>
+              <th>{{ t('m024') }}</th>
+              <th>{{ t('m026') }}</th>
             </tr>
           </thead>
 
@@ -229,8 +233,8 @@ onMounted(loadQna)
 
                   {{
                     qna.status === 'ANSWERED'
-                      ? '답변완료'
-                      : '답변대기'
+                      ? t('m575')
+                      : t('m576')
                   }}
                 </span>
               </td>
@@ -277,8 +281,8 @@ onMounted(loadQna)
 
               {{
                 qna.status === 'ANSWERED'
-                  ? '답변완료'
-                  : '답변대기'
+                  ? t('m575')
+                  : t('m576')
               }}
             </span>
 

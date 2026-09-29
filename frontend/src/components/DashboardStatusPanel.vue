@@ -1,4 +1,9 @@
 <script setup>
+import { useI18n } from 'vue-i18n'
+import { useFormatLocale } from '../i18n'
+const { t } = useI18n()
+const formatLocale = useFormatLocale()
+
 import { computed } from 'vue'
 
 const props = defineProps({
@@ -9,7 +14,7 @@ const props = defineProps({
 })
 const total = computed(() => props.items.reduce((sum, item) => sum + item.count, 0))
 const percent = (count) => total.value ? count / total.value * 100 : 0
-const number = (value) => value.toLocaleString('ko-KR')
+const number = (value) => value.toLocaleString(formatLocale.value)
 const gradient = computed(() => {
   if (!total.value) return '#e8edf4'
   let position = 0
@@ -24,9 +29,9 @@ const gradient = computed(() => {
 
 <template>
   <section class="status-panel">
-    <header><div><h3>{{ title }}</h3><p>{{ subtitle }}</p></div><RouterLink :to="to" :aria-label="`${title} 관리 화면 보기`">관리 ↗</RouterLink></header>
+    <header><div><h3>{{ title }}</h3><p>{{ subtitle }}</p></div><RouterLink :to="to" :aria-label="t('m478', { p0: title })">{{ t('m479') }}</RouterLink></header>
     <div class="chart-layout">
-      <div class="ring" :style="{ background: gradient }" aria-hidden="true"><div class="ring-center"><span>전체</span><strong>{{ number(total) }}</strong><small>{{ total ? '상태별 분포' : '등록 데이터 없음' }}</small></div></div>
+      <div class="ring" :style="{ background: gradient }" aria-hidden="true"><div class="ring-center"><span>{{ t('m064') }}</span><strong>{{ number(total) }}</strong><small>{{ total ? t('m480') : t('m481') }}</small></div></div>
       <ul class="legend"><li v-for="item in items" :key="item.key">
         <div class="legend-label"><span><i :style="{ background: item.color }" aria-hidden="true"></i>{{ item.label }}</span><span><strong>{{ number(item.count) }}</strong><small>{{ percent(item.count).toFixed(1) }}%</small></span></div>
         <div class="track" aria-hidden="true"><div :style="{ width: `${percent(item.count)}%`, background: item.color }"></div></div>

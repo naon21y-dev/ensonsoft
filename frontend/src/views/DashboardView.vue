@@ -1,27 +1,32 @@
 <script setup>
+import { useI18n } from 'vue-i18n'
+import { useUiMessage, useFormatLocale } from '../i18n'
+const { t } = useI18n()
+const formatLocale = useFormatLocale()
+
 import { computed, onMounted, ref } from 'vue'
 import { getDashboard } from '../api/Dashboard'
 import DashboardStatusPanel from '../components/DashboardStatusPanel.vue'
 
 const dashboard = ref(null)
 const loading = ref(false)
-const errorMessage = ref('')
+const errorMessage = useUiMessage()
 const authenticationRequired = ref(false)
-const number = (value) => value.toLocaleString('ko-KR')
+const number = (value) => value.toLocaleString(formatLocale.value)
 const date = (value) => value ? value.replace('T', ' ').slice(0, 19) : '-'
 const palette = { normal: '#219b83', warning: '#e5a434', error: '#e06270', maintenance: '#6089dc', offline: '#7b8499', inactive: '#bec7d5' }
-const equipmentLabels = { NORMAL: '정상', WARNING: '주의', ERROR: '장애', MAINTENANCE: '점검중', OFFLINE: '오프라인', INACTIVE: '운영 중지' }
-const maintenanceLabels = { REPORTED: '접수', IN_PROGRESS: '처리중', COMPLETED: '완료' }
-const eventLabels = { UNPROCESSED: '미처리', PROCESSING: '처리중', COMPLETED: '완료' }
-const eventTypes = { ACCIDENT: '사고 감지', STOPPED_VEHICLE: '정지 차량', WRONG_WAY: '역주행', PEDESTRIAN: '보행자 감지', CONGESTION: '혼잡', ETC: '기타' }
-const severityLabels = { NORMAL: '일반', WARNING: '주의', CRITICAL: '긴급' }
+const equipmentLabels = computed(() => ({ NORMAL: t('m081'), WARNING: t('m082'), ERROR: t('m083'), MAINTENANCE: t('m084'), OFFLINE: t('m085'), INACTIVE: t('m086') }))
+const maintenanceLabels = computed(() => ({ REPORTED: t('m087'), IN_PROGRESS: t('m088'), COMPLETED: t('m089') }))
+const eventLabels = computed(() => ({ UNPROCESSED: t('m090'), PROCESSING: t('m088'), COMPLETED: t('m089') }))
+const eventTypes = computed(() => ({ ACCIDENT: t('m091'), STOPPED_VEHICLE: t('m092'), WRONG_WAY: t('m093'), PEDESTRIAN: t('m094'), CONGESTION: t('m095'), ETC: t('m096') }))
+const severityLabels = computed(() => ({ NORMAL: t('m097'), WARNING: t('m082'), CRITICAL: t('m098') }))
 const kpis = computed(() => dashboard.value ? [
-  { label: '전체 현장', value: dashboard.value.totalSites, unit: '개소', note: '등록된 전체 현장', to: '/sites', tone: 'blue', icon: '▦' },
-  { label: '전체 장비', value: dashboard.value.totalEquipments, unit: '대', note: '모든 상태의 장비', to: '/equipments', tone: 'blue', icon: '▤' },
-  { label: '정상 장비', value: dashboard.value.normalEquipments, unit: '대', note: '정상 상태 장비', to: '/equipments', tone: 'green', icon: '✓' },
-  { label: '장애 장비', value: dashboard.value.errorEquipments, unit: '대', note: '장애 상태 장비', to: '/equipments', tone: 'red', icon: '!' },
-  { label: '미처리 유지보수', value: dashboard.value.pendingMaintenances, unit: '건', note: '접수 + 처리중', to: '/maintenance', tone: 'amber', icon: '↻' },
-  { label: '관제 이벤트', value: dashboard.value.totalEvents, unit: '건', note: '전체 영상분석 이벤트', to: '/monitoring', tone: 'violet', icon: '◉' }
+  { label: t('m099'), value: dashboard.value.totalSites, unit: t('m100'), note: t('m101'), to: '/sites', tone: 'blue', icon: '▦' },
+  { label: t('m102'), value: dashboard.value.totalEquipments, unit: t('m103'), note: t('m104'), to: '/equipments', tone: 'blue', icon: '▤' },
+  { label: t('m105'), value: dashboard.value.normalEquipments, unit: t('m103'), note: t('m106'), to: '/equipments', tone: 'green', icon: '✓' },
+  { label: t('m107'), value: dashboard.value.errorEquipments, unit: t('m103'), note: t('m108'), to: '/equipments', tone: 'red', icon: '!' },
+  { label: t('m109'), value: dashboard.value.pendingMaintenances, unit: t('m065'), note: t('m110'), to: '/maintenance', tone: 'amber', icon: '↻' },
+  { label: t('m111'), value: dashboard.value.totalEvents, unit: t('m065'), note: t('m112'), to: '/monitoring', tone: 'violet', icon: '◉' }
 ] : [])
 
 function items(counts, labels, colors) {
@@ -31,10 +36,10 @@ const panels = computed(() => {
   if (!dashboard.value) return []
   const colors = { NORMAL: palette.normal, WARNING: palette.warning, ERROR: palette.error, MAINTENANCE: palette.maintenance, OFFLINE: palette.offline, INACTIVE: palette.inactive }
   return [
-    { title: '장비 상태별 현황', subtitle: '현장에 연결된 전체 장비', to: '/equipments', items: items(dashboard.value.equipmentStatuses, equipmentLabels, colors) },
-    { title: '현장 상태별 현황', subtitle: '등록 현장의 현재 운영 상태', to: '/sites', items: items(dashboard.value.siteStatuses, { NORMAL: '정상', WARNING: '주의', ERROR: '장애', MAINTENANCE: '점검중', INACTIVE: '운영 중지' }, colors) },
-    { title: '유지보수 처리 현황', subtitle: '접수부터 처리 완료까지', to: '/maintenance', items: items(dashboard.value.maintenanceStatuses, maintenanceLabels, { REPORTED: palette.warning, IN_PROGRESS: palette.maintenance, COMPLETED: palette.normal }) },
-    { title: '관제 이벤트 현황', subtitle: '영상분석 이벤트의 처리 상태', to: '/monitoring', items: items(dashboard.value.eventStatuses, eventLabels, { UNPROCESSED: palette.error, PROCESSING: palette.maintenance, COMPLETED: palette.normal }) }
+    { title: t('m113'), subtitle: t('m114'), to: '/equipments', items: items(dashboard.value.equipmentStatuses, equipmentLabels.value, colors) },
+    { title: t('m115'), subtitle: t('m116'), to: '/sites', items: items(dashboard.value.siteStatuses, { NORMAL: t('m081'), WARNING: t('m082'), ERROR: t('m083'), MAINTENANCE: t('m084'), INACTIVE: t('m086') }, colors) },
+    { title: t('m117'), subtitle: t('m118'), to: '/maintenance', items: items(dashboard.value.maintenanceStatuses, maintenanceLabels.value, { REPORTED: palette.warning, IN_PROGRESS: palette.maintenance, COMPLETED: palette.normal }) },
+    { title: t('m119'), subtitle: t('m120'), to: '/monitoring', items: items(dashboard.value.eventStatuses, eventLabels.value, { UNPROCESSED: palette.error, PROCESSING: palette.maintenance, COMPLETED: palette.normal }) }
   ]
 })
 const recentMaintenances = computed(() => Array.isArray(dashboard.value?.recentMaintenances) ? dashboard.value.recentMaintenances : [])
@@ -51,14 +56,14 @@ async function loadDashboard() {
     if (String(response.headers?.['content-type'] || '').includes('text/html')) {
       authenticationRequired.value = true
       dashboard.value = null
-      throw new Error('로그인 화면이 반환되었습니다. 다시 로그인한 뒤 대시보드를 열어주세요.')
+      throw new Error(t('m121'))
     }
     // 인증 만료 등으로 HTML이나 잘못된 응답이 와도 0건으로 오인하지 않습니다.
     const fields = ['totalSites', 'totalEquipments', 'normalEquipments', 'errorEquipments', 'pendingMaintenances', 'totalEvents']
-    const statusKeys = { equipmentStatuses: Object.keys(equipmentLabels), siteStatuses: ['NORMAL', 'WARNING', 'ERROR', 'MAINTENANCE', 'INACTIVE'], maintenanceStatuses: Object.keys(maintenanceLabels), eventStatuses: Object.keys(eventLabels) }
+    const statusKeys = { equipmentStatuses: Object.keys(equipmentLabels.value), siteStatuses: ['NORMAL', 'WARNING', 'ERROR', 'MAINTENANCE', 'INACTIVE'], maintenanceStatuses: Object.keys(maintenanceLabels.value), eventStatuses: Object.keys(eventLabels.value) }
     if (!data || fields.some(key => !Number.isFinite(data[key]) || data[key] < 0)
       || Object.entries(statusKeys).some(([key, keys]) => keys.some(status => !Number.isFinite(data[key]?.[status]) || data[key][status] < 0))) {
-      throw new Error('대시보드 응답 형식을 확인할 수 없습니다. 로그인 상태와 서버를 확인해주세요.')
+      throw new Error(t('m122'))
     }
     dashboard.value = data
   } catch (error) {
@@ -66,7 +71,7 @@ async function loadDashboard() {
       authenticationRequired.value = true
       dashboard.value = null
     }
-    errorMessage.value = error.response?.data?.message || error.message || '대시보드 데이터를 불러오지 못했습니다.'
+    errorMessage.value = error.response?.data?.message || error.message || t('m123')
   } finally { loading.value = false }
 }
 onMounted(loadDashboard)
@@ -75,36 +80,36 @@ onMounted(loadDashboard)
 <template>
   <main class="dashboard-page" :aria-busy="loading">
     <header class="dashboard-header">
-      <div class="header-copy"><p class="eyebrow"><span aria-hidden="true"></span> SMART MOBILITY / OVERVIEW</p><h1>운영 대시보드</h1><p class="description">현장부터 장비, 장애 대응까지 한눈에 확인하세요.</p></div>
-      <div class="header-actions"><button :disabled="loading" @click="loadDashboard"><span aria-hidden="true">↻</span> {{ loading ? '조회 중...' : '새로고침' }}</button><p v-if="dashboard">집계 시각 {{ date(dashboard.generatedAt) }}</p><p v-else>전체 기간 · 현재 DB 기준</p></div>
+      <div class="header-copy"><p class="eyebrow"><span aria-hidden="true"></span> {{ t('m124') }}</p><h1>{{ t('m125') }}</h1><p class="description">{{ t('m126') }}</p></div>
+      <div class="header-actions"><button :disabled="loading" @click="loadDashboard"><span aria-hidden="true">↻</span> {{ loading ? t('m127') : t('m128') }}</button><p v-if="dashboard">{{ t('m129') }} {{ date(dashboard.generatedAt) }}</p><p v-else>{{ t('m130') }}</p></div>
     </header>
 
-    <div v-if="errorMessage" class="error-banner" role="alert"><div><strong>대시보드 조회에 실패했습니다.</strong><p>{{ errorMessage }}</p><p v-if="dashboard">이전에 조회한 데이터를 표시하고 있습니다.</p></div><RouterLink v-if="authenticationRequired" to="/login">다시 로그인 →</RouterLink><button v-else :disabled="loading" @click="loadDashboard">다시 시도</button></div>
-    <div v-if="!dashboard && loading" class="loading-state" role="status"><span class="loading-symbol" aria-hidden="true">◌</span><h2>운영 현황을 집계하고 있습니다</h2><p>현장 · 장비 · 유지보수 · 관제 이벤트</p></div>
+    <div v-if="errorMessage" class="error-banner" role="alert"><div><strong>{{ t('m131') }}</strong><p>{{ errorMessage }}</p><p v-if="dashboard">{{ t('m132') }}</p></div><RouterLink v-if="authenticationRequired" to="/login">{{ t('m133') }}</RouterLink><button v-else :disabled="loading" @click="loadDashboard">{{ t('m134') }}</button></div>
+    <div v-if="!dashboard && loading" class="loading-state" role="status"><span class="loading-symbol" aria-hidden="true">◌</span><h2>{{ t('m135') }}</h2><p>{{ t('m136') }}</p></div>
 
     <template v-if="dashboard">
-      <div class="section-heading"><h2>주요 운영 지표</h2><span>전체 기간 누적 · 조회 시점 기준</span></div>
+      <div class="section-heading"><h2>{{ t('m137') }}</h2><span>{{ t('m138') }}</span></div>
       <div class="kpi-grid"><RouterLink v-for="kpi in kpis" :key="kpi.label" :to="kpi.to" class="kpi-card" :class="kpi.tone">
         <div class="kpi-top"><span>{{ kpi.label }}</span><span class="kpi-icon" aria-hidden="true">{{ kpi.icon }}</span></div>
         <div class="kpi-value"><strong>{{ number(kpi.value) }}</strong><span>{{ kpi.unit }}</span></div>
         <div class="kpi-bottom"><span>{{ kpi.note }}</span><span aria-hidden="true">↗</span></div>
       </RouterLink></div>
 
-      <div class="section-heading"><h2>운영 상태 현황</h2><span>상태별 건수 및 비율</span></div>
+      <div class="section-heading"><h2>{{ t('m139') }}</h2><span>{{ t('m140') }}</span></div>
       <div class="status-grid"><DashboardStatusPanel v-for="panel in panels" :key="panel.title" v-bind="panel" /></div>
 
-      <div class="section-heading"><h2>최근 발생 내역</h2><span>발생 시간순 · 각 최대 5건</span></div>
+      <div class="section-heading"><h2>{{ t('m141') }}</h2><span>{{ t('m142') }}</span></div>
       <div class="recent-grid">
-        <section class="recent-panel"><header><div><span class="panel-tag amber">MAINTENANCE</span><h3>최근 유지보수 장애</h3></div><RouterLink to="/maintenance">전체 보기 ↗</RouterLink></header>
-          <p v-if="!recentMaintenances.length" class="empty-state">접수된 유지보수 장애가 없습니다.</p>
+        <section class="recent-panel"><header><div><span class="panel-tag amber">{{ t('m143') }}</span><h3>{{ t('m144') }}</h3></div><RouterLink to="/maintenance">{{ t('m145') }}</RouterLink></header>
+          <p v-if="!recentMaintenances.length" class="empty-state">{{ t('m146') }}</p>
           <ul v-else class="recent-list"><li v-for="item in recentMaintenances" :key="item.id">
             <div class="recent-top"><h4>{{ item.title }}</h4><span class="badge" :class="item.status">{{ maintenanceLabels[item.status] }}</span></div>
             <p class="location">{{ item.siteName }} <span aria-hidden="true">/</span> {{ item.equipmentName }}</p>
-            <div class="recent-meta"><span>접수자 {{ item.reportedBy }}</span><time :datetime="item.occurredAt">{{ date(item.occurredAt) }}</time></div>
+            <div class="recent-meta"><span>{{ t('m147') }} {{ item.reportedBy }}</span><time :datetime="item.occurredAt">{{ date(item.occurredAt) }}</time></div>
           </li></ul>
         </section>
-        <section class="recent-panel"><header><div><span class="panel-tag blue">MONITORING</span><h3>최근 관제 이벤트</h3></div><RouterLink to="/monitoring">전체 보기 ↗</RouterLink></header>
-          <p v-if="!recentEvents.length" class="empty-state">발생한 관제 이벤트가 없습니다.</p>
+        <section class="recent-panel"><header><div><span class="panel-tag blue">{{ t('m148') }}</span><h3>{{ t('m149') }}</h3></div><RouterLink to="/monitoring">{{ t('m145') }}</RouterLink></header>
+          <p v-if="!recentEvents.length" class="empty-state">{{ t('m150') }}</p>
           <ul v-else class="recent-list"><li v-for="item in recentEvents" :key="item.id">
             <div class="recent-top"><h4><span class="severity-dot" :class="item.severity" aria-hidden="true"></span>{{ eventTypes[item.eventType] }}</h4><span class="badge" :class="item.status">{{ eventLabels[item.status] }}</span></div>
             <p class="location">{{ item.location }} <span aria-hidden="true">/</span> {{ item.cameraId }}</p>
@@ -112,7 +117,7 @@ onMounted(loadDashboard)
           </li></ul>
         </section>
       </div>
-      <footer class="dashboard-footer">미처리 유지보수는 접수·처리중 건수의 합계입니다. 새로고침하면 최신 DB 현황을 조회합니다.</footer>
+      <footer class="dashboard-footer">{{ t('m151') }}</footer>
     </template>
   </main>
 </template>

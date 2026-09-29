@@ -1,9 +1,14 @@
 <script setup>
+import { useI18n } from 'vue-i18n'
+import { roleText } from '../i18n'
+const { t } = useI18n()
+import { useUiMessage } from '../i18n'
+
 import { computed, onMounted, ref } from 'vue'
 import api from '../api/api'
 
 const members = ref([])
-const message = ref('')
+const message = useUiMessage()
 const loading = ref(false)
 const searchKeyword = ref('')
 const roleFilter = ref('ALL')
@@ -24,12 +29,12 @@ const getMembers = async () => {
     console.error(error)
 
     if (error.response?.status === 403) {
-      message.value = '관리자만 접근할 수 있습니다.'
+      message.value = t('m002')
     } else if (error.response?.status === 401) {
-      message.value = '로그인이 필요합니다.'
+      message.value = t('m003')
     } else {
       message.value =
-        error.response?.data?.message || '회원 목록을 불러오지 못했습니다.'
+        error.response?.data?.message || t('m526')
     }
   } finally {
     loading.value = false
@@ -91,13 +96,13 @@ onMounted(() => {
     <header class="page-header">
       <div>
         <div class="eyebrow">
-          ADMINISTRATION
+          {{ t('m504') }}
         </div>
 
-        <h1>회원 관리</h1>
+        <h1>{{ t('m527') }}</h1>
 
         <p>
-          시스템 사용자와 계정 권한을 관리합니다.
+          {{ t('m528') }}
         </p>
       </div>
 
@@ -120,7 +125,7 @@ onMounted(() => {
           />
         </svg>
 
-        {{ loading ? '불러오는 중' : '새로고침' }}
+        {{ loading ? t('m529') : t('m128') }}
       </button>
     </header>
 
@@ -144,7 +149,7 @@ onMounted(() => {
       <article class="stat-card">
         <div class="stat-top">
           <span class="stat-label">
-            전체 회원
+            {{ t('m530') }}
           </span>
 
           <div class="stat-icon blue">
@@ -163,13 +168,13 @@ onMounted(() => {
         </div>
 
         <strong>{{ totalMembers }}</strong>
-        <span class="stat-caption">등록된 전체 계정</span>
+        <span class="stat-caption">{{ t('m531') }}</span>
       </article>
 
       <article class="stat-card">
         <div class="stat-top">
           <span class="stat-label">
-            관리자
+            {{ t('m223') }}
           </span>
 
           <div class="stat-icon purple">
@@ -186,13 +191,13 @@ onMounted(() => {
         </div>
 
         <strong>{{ adminCount }}</strong>
-        <span class="stat-caption">ADMIN 권한 계정</span>
+        <span class="stat-caption">{{ t('m532') }}</span>
       </article>
 
       <article class="stat-card">
         <div class="stat-top">
           <span class="stat-label">
-            일반 회원
+            {{ t('m533') }}
           </span>
 
           <div class="stat-icon cyan">
@@ -209,13 +214,13 @@ onMounted(() => {
         </div>
 
         <strong>{{ userCount }}</strong>
-        <span class="stat-caption">USER 권한 계정</span>
+        <span class="stat-caption">{{ t('m534') }}</span>
       </article>
 
       <article class="stat-card">
         <div class="stat-top">
           <span class="stat-label">
-            활성 계정
+            {{ t('m535') }}
           </span>
 
           <div class="stat-icon green">
@@ -231,7 +236,7 @@ onMounted(() => {
         </div>
 
         <strong>{{ enabledCount }}</strong>
-        <span class="stat-caption">현재 사용 가능한 계정</span>
+        <span class="stat-caption">{{ t('m536') }}</span>
       </article>
 
     </section>
@@ -244,10 +249,10 @@ onMounted(() => {
       <div class="panel-header">
 
         <div>
-          <h2>회원 목록</h2>
+          <h2>{{ t('m537') }}</h2>
 
           <p>
-            총 {{ totalMembers }}명의 사용자가 등록되어 있습니다.
+            {{ t('counts.members', totalMembers) }}
           </p>
         </div>
 
@@ -268,7 +273,7 @@ onMounted(() => {
             <input
               v-model="searchKeyword"
               type="text"
-              placeholder="이름, 아이디, 이메일 검색"
+              :placeholder="t('m539')"
             />
           </div>
 
@@ -278,15 +283,15 @@ onMounted(() => {
             class="role-select"
           >
             <option value="ALL">
-              전체 권한
+              {{ t('m540') }}
             </option>
 
             <option value="ADMIN">
-              관리자
+              {{ t('m223') }}
             </option>
 
             <option value="USER">
-              일반 회원
+              {{ t('m533') }}
             </option>
           </select>
 
@@ -302,10 +307,10 @@ onMounted(() => {
       >
         <div class="spinner"></div>
 
-        <strong>회원 정보를 불러오고 있습니다.</strong>
+        <strong>{{ t('m541') }}</strong>
 
         <span>
-          잠시만 기다려주세요.
+          {{ t('m022') }}
         </span>
       </div>
 
@@ -328,10 +333,10 @@ onMounted(() => {
           </svg>
         </div>
 
-        <strong>검색 결과가 없습니다.</strong>
+        <strong>{{ t('m370') }}</strong>
 
         <span>
-          다른 검색어나 권한 조건을 선택해주세요.
+          {{ t('m542') }}
         </span>
       </div>
 
@@ -345,12 +350,12 @@ onMounted(() => {
         <table>
           <thead>
             <tr>
-              <th>사용자</th>
-              <th>아이디</th>
-              <th>이메일</th>
-              <th>권한</th>
-              <th>계정 상태</th>
-              <th class="id-column">ID</th>
+              <th>{{ t('m543') }}</th>
+              <th>{{ t('m264') }}</th>
+              <th>{{ t('m398') }}</th>
+              <th>{{ t('m471') }}</th>
+              <th>{{ t('m472') }}</th>
+              <th class="id-column">{{ t('m544') }}</th>
             </tr>
           </thead>
 
@@ -380,8 +385,8 @@ onMounted(() => {
 
                     <span>
                       {{ member.role === 'ADMIN'
-                        ? '시스템 관리자'
-                        : '일반 사용자'
+                        ? t('m545')
+                        : t('m224')
                       }}
                     </span>
                   </div>
@@ -407,7 +412,7 @@ onMounted(() => {
                   :class="member.role?.toLowerCase()"
                 >
                   <span class="role-dot"></span>
-                  {{ member.role }}
+                  {{ roleText(member.role) }}
                 </span>
               </td>
 
@@ -418,7 +423,7 @@ onMounted(() => {
                 >
                   <span class="status-dot"></span>
 
-                  {{ member.enabled ? '활성' : '비활성' }}
+                  {{ member.enabled ? t('m546') : t('m547') }}
                 </span>
               </td>
 
@@ -475,30 +480,30 @@ onMounted(() => {
             >
               <span class="status-dot"></span>
 
-              {{ member.enabled ? '활성' : '비활성' }}
+              {{ member.enabled ? t('m546') : t('m547') }}
             </span>
 
           </div>
 
           <div class="mobile-info-row">
-            <span>이메일</span>
+            <span>{{ t('m398') }}</span>
             <strong>{{ member.email }}</strong>
           </div>
 
           <div class="mobile-info-row">
-            <span>권한</span>
+            <span>{{ t('m471') }}</span>
 
             <span
               class="role-badge"
               :class="member.role?.toLowerCase()"
             >
               <span class="role-dot"></span>
-              {{ member.role }}
+              {{ roleText(member.role) }}
             </span>
           </div>
 
           <div class="mobile-info-row">
-            <span>회원 ID</span>
+            <span>{{ t('m548') }}</span>
             <strong>#{{ member.id }}</strong>
           </div>
 
@@ -513,11 +518,11 @@ onMounted(() => {
         class="panel-footer"
       >
         <span>
-          총 {{ filteredMembers.length }}개 결과
+          {{ t('counts.results', filteredMembers.length) }}
         </span>
 
         <span>
-          전체 {{ totalMembers }}명
+          {{ t('counts.people', totalMembers) }}
         </span>
       </div>
 

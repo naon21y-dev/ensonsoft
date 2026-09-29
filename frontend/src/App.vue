@@ -1,6 +1,9 @@
 <script setup>
+
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import LanguageSwitcher from './components/LanguageSwitcher.vue'
+import { setLocale, roleText } from './i18n'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from './stores/auth'
 
@@ -16,7 +19,7 @@ const languageOpen = ref(false)
 const languages = [
   { code: 'ko', label: '한국어', short: 'KO' },
   { code: 'en', label: 'English', short: 'EN' },
-  { code: 'ja', label: '日本語', short: 'JA' }
+  { code: 'ja', label: '日本語', short: 'JP' }
 ]
 
 const currentLanguage = computed(() =>
@@ -24,13 +27,10 @@ const currentLanguage = computed(() =>
 )
 
 const changeLanguage = (code) => {
-  locale.value = code
-  localStorage.setItem('language', code)
-  document.documentElement.lang = code
+  setLocale(code)
   languageOpen.value = false
 }
 
-document.documentElement.lang = locale.value
 
 /*
  * 홈 / 로그인 / 회원가입은
@@ -47,6 +47,7 @@ const logout = () => {
 </script>
 
 <template>
+  <div class="app-language-control"><LanguageSwitcher /></div>
 
   <!-- =========================================
        HOME / LOGIN / SIGNUP
@@ -78,13 +79,13 @@ const logout = () => {
         <RouterLink
           to="/"
           class="logo-link"
-          aria-label="엔슨소프트 인트로 홈"
-          title="홈으로"
+          :aria-label="t('m500')"
+          :title="t('m501')"
         >
 
           <img
             :src="logoWhite"
-            alt="엔슨소프트"
+            :alt="t('m232')"
             class="ensonsoft-logo"
           />
 
@@ -100,7 +101,7 @@ const logout = () => {
       <nav class="sidebar-nav">
 
         <p class="nav-label">
-          SMART MOBILITY
+          {{ t('m239') }}
         </p>
 
 
@@ -314,7 +315,7 @@ const logout = () => {
         <template v-if="authStore.isAdmin">
 
           <p class="nav-label admin-label">
-            ADMINISTRATION
+            {{ t('m504') }}
           </p>
 
           <RouterLink
@@ -414,7 +415,7 @@ const logout = () => {
             </strong>
 
             <span>
-              {{ authStore.role }}
+              {{ roleText(authStore.role) }}
             </span>
 
           </div>
@@ -483,6 +484,7 @@ const logout = () => {
 
 
 <style scoped>
+.app-language-control { position: fixed; right: 16px; bottom: 16px; z-index: 10000; }
 
 /*
  * RouterView 페이지 전환

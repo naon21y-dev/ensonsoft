@@ -1,4 +1,9 @@
 <script setup>
+import { useI18n } from 'vue-i18n'
+import { useUiMessage, useFormatLocale } from '../i18n'
+const { t } = useI18n()
+const formatLocale = useFormatLocale()
+
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import api from '../api/api'
@@ -8,7 +13,7 @@ const router = useRouter()
 
 const title = ref('')
 const content = ref('')
-const message = ref('')
+const message = useUiMessage()
 
 const loading = ref(true)
 const submitting = ref(false)
@@ -34,7 +39,7 @@ const getBoard = async () => {
 
     message.value =
       error.response?.data?.message ||
-      '게시글을 불러오지 못했습니다.'
+      t('m013')
   } finally {
     loading.value = false
   }
@@ -47,12 +52,12 @@ const updateBoard = async () => {
   message.value = ''
 
   if (!title.value.trim()) {
-    message.value = '제목을 입력해주세요.'
+    message.value = t('m033')
     return
   }
 
   if (!content.value.trim()) {
-    message.value = '내용을 입력해주세요.'
+    message.value = t('m034')
     return
   }
 
@@ -67,7 +72,7 @@ const updateBoard = async () => {
       }
     )
 
-    alert('게시글이 수정되었습니다.')
+    alert(t('m035'))
 
     router.push(`/boards/${route.params.id}`)
   } catch (error) {
@@ -75,7 +80,7 @@ const updateBoard = async () => {
 
     message.value =
       error.response?.data?.message ||
-      '게시글 수정에 실패했습니다.'
+      t('m036')
   } finally {
     submitting.value = false
   }
@@ -107,13 +112,13 @@ onMounted(() => {
       <div>
         <div class="eyebrow">
           <span class="eyebrow-dot"></span>
-          SMART MOBILITY / BOARD EDIT
+          {{ t('m037') }}
         </div>
 
-        <h1>게시글 수정</h1>
+        <h1>{{ t('m038') }}</h1>
 
         <p>
-          등록된 게시글의 제목과 내용을 수정하세요.
+          {{ t('m039') }}
         </p>
       </div>
 
@@ -132,7 +137,7 @@ onMounted(() => {
           />
         </svg>
 
-        게시판 목록
+        {{ t('m040') }}
       </button>
     </section>
 
@@ -158,9 +163,9 @@ onMounted(() => {
     >
       <div class="loading-spinner"></div>
 
-      <strong>게시글을 불러오는 중입니다.</strong>
+      <strong>{{ t('m021') }}</strong>
 
-      <p>잠시만 기다려주세요.</p>
+      <p>{{ t('m022') }}</p>
     </section>
 
 
@@ -190,16 +195,16 @@ onMounted(() => {
           </div>
 
           <div>
-            <h2>게시글 수정</h2>
+            <h2>{{ t('m038') }}</h2>
 
             <p>
-              기존 게시글의 내용을 변경합니다.
+              {{ t('m041') }}
             </p>
           </div>
         </div>
 
         <div class="board-number">
-          BOARD
+          {{ t('m023') }}
           <strong>#{{ route.params.id }}</strong>
         </div>
 
@@ -215,12 +220,12 @@ onMounted(() => {
         <div class="form-group">
           <div class="label-row">
             <label for="edit-title">
-              제목
+              {{ t('m042') }}
               <span>*</span>
             </label>
 
             <small>
-              {{ titleLength }}자
+              {{ t('counts.characters', { count: titleLength.toLocaleString(formatLocale) }, titleLength) }}
             </small>
           </div>
 
@@ -229,11 +234,11 @@ onMounted(() => {
             v-model="title"
             type="text"
             maxlength="200"
-            placeholder="게시글 제목을 입력하세요."
+            :placeholder="t('m044')"
           />
 
           <p class="field-help">
-            게시글의 제목을 수정할 수 있습니다.
+            {{ t('m045') }}
           </p>
         </div>
 
@@ -245,12 +250,12 @@ onMounted(() => {
         <div class="form-group">
           <div class="label-row">
             <label for="edit-content">
-              내용
+              {{ t('m046') }}
               <span>*</span>
             </label>
 
             <small>
-              {{ contentLength.toLocaleString('ko-KR') }}자
+              {{ t('counts.characters', { count: contentLength.toLocaleString(formatLocale) }, contentLength) }}
             </small>
           </div>
 
@@ -258,11 +263,11 @@ onMounted(() => {
             id="edit-content"
             v-model="content"
             rows="14"
-            placeholder="게시글 내용을 입력하세요."
+            :placeholder="t('m047')"
           ></textarea>
 
           <p class="field-help">
-            변경할 내용을 확인한 후 저장해주세요.
+            {{ t('m048') }}
           </p>
         </div>
 
@@ -285,7 +290,7 @@ onMounted(() => {
             />
           </svg>
 
-          저장하면 변경된 내용이 바로 반영됩니다.
+          {{ t('m049') }}
         </div>
 
         <div class="button-group">
@@ -296,7 +301,7 @@ onMounted(() => {
             :disabled="submitting"
             @click="cancelEdit"
           >
-            취소
+            {{ t('m050') }}
           </button>
 
           <button
@@ -324,7 +329,7 @@ onMounted(() => {
               class="button-spinner"
             ></span>
 
-            {{ submitting ? '저장 중...' : '변경사항 저장' }}
+            {{ submitting ? t('m051') : t('m052') }}
           </button>
 
         </div>

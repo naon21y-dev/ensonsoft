@@ -1,4 +1,9 @@
 <script setup>
+import { useI18n } from 'vue-i18n'
+import { useUiMessage, useFormatLocale } from '../i18n'
+const { t } = useI18n()
+const formatLocale = useFormatLocale()
+
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import api from '../api/api'
@@ -7,7 +12,7 @@ const router = useRouter()
 
 const boards = ref([])
 const keyword = ref('')
-const message = ref('')
+const message = useUiMessage()
 const loading = ref(false)
 
 // 게시글 목록 조회
@@ -27,7 +32,7 @@ const getBoards = async () => {
     console.error(error)
 
     message.value =
-      error.response?.data?.message || '게시글 조회에 실패했습니다.'
+      error.response?.data?.message || t('m053')
   } finally {
     loading.value = false
   }
@@ -64,7 +69,7 @@ const formatDate = (date) => {
     return date
   }
 
-  return new Intl.DateTimeFormat('ko-KR', {
+  return new Intl.DateTimeFormat(formatLocale.value, {
     year: 'numeric',
     month: '2-digit',
     day: '2-digit'
@@ -87,13 +92,13 @@ onMounted(() => {
       <div>
         <div class="eyebrow">
           <span class="eyebrow-dot"></span>
-          SMART MOBILITY / BOARD
+          {{ t('m017') }}
         </div>
 
-        <h1>게시판</h1>
+        <h1>{{ t('m054') }}</h1>
 
         <p>
-          운영 공지 및 시스템 관련 게시글을 확인하세요.
+          {{ t('m055') }}
         </p>
       </div>
 
@@ -112,7 +117,7 @@ onMounted(() => {
           />
         </svg>
 
-        글쓰기
+        {{ t('m056') }}
       </button>
     </section>
 
@@ -135,8 +140,8 @@ onMounted(() => {
         </div>
 
         <div>
-          <strong>게시글 검색</strong>
-          <span>제목으로 게시글을 검색할 수 있습니다.</span>
+          <strong>{{ t('m057') }}</strong>
+          <span>{{ t('m058') }}</span>
         </div>
       </div>
 
@@ -155,7 +160,7 @@ onMounted(() => {
           <input
             v-model="keyword"
             type="text"
-            placeholder="검색할 제목을 입력하세요."
+            :placeholder="t('m059')"
             @keyup.enter="searchBoards"
           />
         </div>
@@ -165,7 +170,7 @@ onMounted(() => {
           class="search-button"
           @click="searchBoards"
         >
-          검색
+          {{ t('m060') }}
         </button>
 
         <button
@@ -173,7 +178,7 @@ onMounted(() => {
           class="reset-button"
           @click="resetSearch"
         >
-          초기화
+          {{ t('m061') }}
         </button>
       </div>
     </section>
@@ -197,17 +202,17 @@ onMounted(() => {
       <!-- 목록 헤더 -->
       <div class="board-card-header">
         <div>
-          <h2>게시글 목록</h2>
+          <h2>{{ t('m062') }}</h2>
 
           <p>
-            등록된 게시글을 확인할 수 있습니다.
+            {{ t('m063') }}
           </p>
         </div>
 
         <div class="board-count">
-          전체
+          {{ t('m064') }}
           <strong>{{ boards.length }}</strong>
-          건
+          {{ t('m065') }}
         </div>
       </div>
 
@@ -219,8 +224,8 @@ onMounted(() => {
       >
         <div class="loading-spinner"></div>
 
-        <strong>게시글을 불러오는 중입니다.</strong>
-        <span>잠시만 기다려주세요.</span>
+        <strong>{{ t('m021') }}</strong>
+        <span>{{ t('m022') }}</span>
       </div>
 
 
@@ -242,10 +247,10 @@ onMounted(() => {
           </svg>
         </div>
 
-        <strong>등록된 게시글이 없습니다.</strong>
+        <strong>{{ t('m066') }}</strong>
 
         <span>
-          새로운 게시글을 작성해보세요.
+          {{ t('m067') }}
         </span>
 
         <button
@@ -253,7 +258,7 @@ onMounted(() => {
           class="empty-write-button"
           @click="goWrite"
         >
-          게시글 작성
+          {{ t('m068') }}
         </button>
       </div>
 
@@ -266,11 +271,11 @@ onMounted(() => {
         <table class="board-table">
           <thead>
             <tr>
-              <th class="number-column">번호</th>
-              <th>제목</th>
-              <th class="writer-column">작성자</th>
-              <th class="view-column">조회수</th>
-              <th class="date-column">작성일</th>
+              <th class="number-column">{{ t('m069') }}</th>
+              <th>{{ t('m042') }}</th>
+              <th class="writer-column">{{ t('m024') }}</th>
+              <th class="view-column">{{ t('m025') }}</th>
+              <th class="date-column">{{ t('m026') }}</th>
             </tr>
           </thead>
 

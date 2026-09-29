@@ -1,4 +1,9 @@
 <script setup>
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
+import { useUiMessage, useFormatLocale } from '../i18n'
+const formatLocale = useFormatLocale()
+
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
@@ -15,19 +20,19 @@ const authStore = useAuthStore()
 
 const qna = ref(null)
 const loading = ref(false)
-const message = ref('')
+const message = useUiMessage()
 const answer = ref('')
 const answerSaving = ref(false)
 
-const categoryLabels = {
-  GENERAL: '일반 문의',
-  SITE: '현장 문의',
-  EQUIPMENT: '장비 문의',
-  VEHICLE: '차량번호 인식',
-  VIDEO_ANALYSIS: '영상분석',
-  MAINTENANCE: '유지보수',
-  ETC: '기타'
-}
+const categoryLabels = computed(() => ({
+  GENERAL: t('m551'),
+  SITE: t('m552'),
+  EQUIPMENT: t('m553'),
+  VEHICLE: t('m342'),
+  VIDEO_ANALYSIS: t('m554'),
+  MAINTENANCE: t('m555'),
+  ETC: t('m096')
+}))
 
 const isOwner = computed(() =>
   qna.value?.username === authStore.username
@@ -50,7 +55,7 @@ const loadQna = async () => {
 
     message.value =
       error.response?.data?.message ||
-      '문의를 불러오지 못했습니다.'
+      t('m591')
   } finally {
     loading.value = false
   }
@@ -58,7 +63,7 @@ const loadQna = async () => {
 
 const submitAnswer = async () => {
   if (!answer.value.trim()) {
-    message.value = '답변 내용을 입력해주세요.'
+    message.value = t('m592')
     return
   }
 
@@ -77,14 +82,14 @@ const submitAnswer = async () => {
 
     message.value =
       error.response?.data?.message ||
-      '답변 등록에 실패했습니다.'
+      t('m593')
   } finally {
     answerSaving.value = false
   }
 }
 
 const removeAnswer = async () => {
-  if (!confirm('관리자 답변을 삭제하시겠습니까?')) return
+  if (!confirm(t('m594'))) return
 
   try {
     await deleteQnaAnswer(qna.value.id)
@@ -95,12 +100,12 @@ const removeAnswer = async () => {
 
     message.value =
       error.response?.data?.message ||
-      '답변 삭제에 실패했습니다.'
+      t('m595')
   }
 }
 
 const removeQna = async () => {
-  if (!confirm('이 문의를 삭제하시겠습니까?')) return
+  if (!confirm(t('m596'))) return
 
   try {
     await deleteQna(qna.value.id)
@@ -110,14 +115,14 @@ const removeQna = async () => {
 
     message.value =
       error.response?.data?.message ||
-      '문의 삭제에 실패했습니다.'
+      t('m597')
   }
 }
 
 const formatDateTime = (value) => {
   if (!value) return '-'
 
-  return new Intl.DateTimeFormat('ko-KR', {
+  return new Intl.DateTimeFormat(formatLocale.value, {
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
@@ -133,7 +138,7 @@ onMounted(loadQna)
   <div class="detail-page">
 
     <button class="back" @click="router.push('/qna')">
-      ← 문의 목록
+      {{ t('m598') }}
     </button>
 
     <div v-if="message" class="error">
@@ -141,7 +146,7 @@ onMounted(loadQna)
     </div>
 
     <div v-if="loading" class="loading">
-      문의 내용을 불러오고 있습니다.
+      {{ t('m599') }}
     </div>
 
     <template v-else-if="qna">
@@ -155,8 +160,8 @@ onMounted(loadQna)
           >
             {{
               qna.status === 'ANSWERED'
-                ? '답변완료'
-                : '답변대기'
+                ? t('m575')
+                : t('m576')
             }}
           </span>
 
@@ -165,7 +170,7 @@ onMounted(loadQna)
           </span>
 
           <span v-if="qna.secret" class="secret">
-            🔒 비공개
+            {{ t('m600') }}
           </span>
         </div>
 
@@ -173,7 +178,7 @@ onMounted(loadQna)
 
         <div class="meta">
           <span>
-            작성자 <strong>{{ qna.username }}</strong>
+            {{ t('m024') }} <strong>{{ qna.username }}</strong>
           </span>
 
           <span>
@@ -190,14 +195,14 @@ onMounted(loadQna)
             class="edit"
             @click="router.push(`/qna/${qna.id}/edit`)"
           >
-            수정
+            {{ t('m030') }}
           </button>
 
           <button
             class="delete"
             @click="removeQna"
           >
-            삭제
+            {{ t('m032') }}
           </button>
         </div>
       </article>
@@ -207,25 +212,25 @@ onMounted(loadQna)
 
         <div class="answer-title">
           <div>
-            <span>ADMIN RESPONSE</span>
-            <h2>관리자 답변</h2>
+            <span>{{ t('m601') }}</span>
+            <h2>{{ t('m602') }}</h2>
           </div>
 
           <span
             v-if="qna.status === 'ANSWERED'"
             class="complete"
           >
-            ✓ 답변 완료
+            {{ t('m603') }}
           </span>
         </div>
 
         <!-- 답변이 있는 경우 -->
         <div v-if="qna.answer" class="answer-content">
           <div class="admin-profile">
-            <div class="admin-avatar">A</div>
+            <div class="admin-avatar">{{ t('m604') }}</div>
 
             <div>
-              <strong>{{ qna.answeredBy || '관리자' }}</strong>
+              <strong>{{ qna.answeredBy || t('m223') }}</strong>
               <span>
                 {{ formatDateTime(qna.answeredAt) }}
               </span>
@@ -241,9 +246,9 @@ onMounted(loadQna)
           class="waiting-answer"
         >
           <div>⏳</div>
-          <strong>관리자 답변을 기다리고 있습니다.</strong>
+          <strong>{{ t('m605') }}</strong>
           <span>
-            문의 내용을 확인한 후 답변드리겠습니다.
+            {{ t('m606') }}
           </span>
         </div>
 
@@ -253,13 +258,13 @@ onMounted(loadQna)
           class="admin-answer-form"
         >
           <label>
-            {{ qna.answer ? '답변 수정' : '답변 작성' }}
+            {{ qna.answer ? t('m607') : t('m608') }}
           </label>
 
           <textarea
             v-model="answer"
             rows="7"
-            placeholder="문의에 대한 답변을 입력해주세요."
+            :placeholder="t('m609')"
           ></textarea>
 
           <div class="answer-actions">
@@ -268,7 +273,7 @@ onMounted(loadQna)
               class="remove-answer"
               @click="removeAnswer"
             >
-              답변 삭제
+              {{ t('m610') }}
             </button>
 
             <button
@@ -278,10 +283,10 @@ onMounted(loadQna)
             >
               {{
                 answerSaving
-                  ? '저장 중...'
+                  ? t('m051')
                   : qna.answer
-                    ? '답변 수정'
-                    : '답변 등록'
+                    ? t('m607')
+                    : t('m611')
               }}
             </button>
           </div>

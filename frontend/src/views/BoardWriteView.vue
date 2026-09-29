@@ -1,4 +1,9 @@
 <script setup>
+import { useI18n } from 'vue-i18n'
+import { useUiMessage, useFormatLocale } from '../i18n'
+const { t } = useI18n()
+const formatLocale = useFormatLocale()
+
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import api from '../api/api'
@@ -7,7 +12,7 @@ const router = useRouter()
 
 const title = ref('')
 const content = ref('')
-const message = ref('')
+const message = useUiMessage()
 const submitting = ref(false)
 
 const titleLength = computed(() => title.value.length)
@@ -20,12 +25,12 @@ const createBoard = async () => {
   message.value = ''
 
   if (!title.value.trim()) {
-    message.value = '제목을 입력해주세요.'
+    message.value = t('m033')
     return
   }
 
   if (!content.value.trim()) {
-    message.value = '내용을 입력해주세요.'
+    message.value = t('m034')
     return
   }
 
@@ -37,7 +42,7 @@ const createBoard = async () => {
       content: content.value.trim()
     })
 
-    alert('게시글이 등록되었습니다.')
+    alert(t('m070'))
 
     router.push(`/boards/${response.data.id}`)
   } catch (error) {
@@ -45,7 +50,7 @@ const createBoard = async () => {
 
     message.value =
       error.response?.data?.message ||
-      '게시글 등록에 실패했습니다.'
+      t('m071')
   } finally {
     submitting.value = false
   }
@@ -67,13 +72,13 @@ const goList = () => {
       <div>
         <div class="eyebrow">
           <span class="eyebrow-dot"></span>
-          SMART MOBILITY / BOARD
+          {{ t('m017') }}
         </div>
 
-        <h1>게시글 작성</h1>
+        <h1>{{ t('m068') }}</h1>
 
         <p>
-          운영 공지 및 시스템 관련 게시글을 등록하세요.
+          {{ t('m072') }}
         </p>
       </div>
 
@@ -92,7 +97,7 @@ const goList = () => {
           />
         </svg>
 
-        목록으로
+        {{ t('m020') }}
       </button>
     </section>
 
@@ -132,14 +137,14 @@ const goList = () => {
           </div>
 
           <div>
-            <h2>새 게시글</h2>
-            <p>게시글의 제목과 내용을 입력해주세요.</p>
+            <h2>{{ t('m073') }}</h2>
+            <p>{{ t('m074') }}</p>
           </div>
         </div>
 
         <div class="required-guide">
           <span>*</span>
-          필수 입력 항목
+          {{ t('m075') }}
         </div>
       </header>
 
@@ -153,12 +158,12 @@ const goList = () => {
         <div class="form-group">
           <div class="label-row">
             <label for="board-title">
-              제목
+              {{ t('m042') }}
               <span>*</span>
             </label>
 
             <small>
-              {{ titleLength }}자
+              {{ t('counts.characters', { count: titleLength.toLocaleString(formatLocale) }, titleLength) }}
             </small>
           </div>
 
@@ -167,12 +172,12 @@ const goList = () => {
             v-model="title"
             type="text"
             maxlength="200"
-            placeholder="게시글 제목을 입력하세요."
+            :placeholder="t('m044')"
             @keyup.enter.prevent
           />
 
           <p class="field-help">
-            게시글의 내용을 쉽게 확인할 수 있는 제목을 입력해주세요.
+            {{ t('m076') }}
           </p>
         </div>
 
@@ -185,12 +190,12 @@ const goList = () => {
         <div class="form-group">
           <div class="label-row">
             <label for="board-content">
-              내용
+              {{ t('m046') }}
               <span>*</span>
             </label>
 
             <small>
-              {{ contentLength.toLocaleString('ko-KR') }}자
+              {{ t('counts.characters', { count: contentLength.toLocaleString(formatLocale) }, contentLength) }}
             </small>
           </div>
 
@@ -198,11 +203,11 @@ const goList = () => {
             id="board-content"
             v-model="content"
             rows="14"
-            placeholder="게시글 내용을 입력하세요."
+            :placeholder="t('m047')"
           ></textarea>
 
           <p class="field-help">
-            필요한 내용을 자세하게 작성해주세요.
+            {{ t('m077') }}
           </p>
         </div>
 
@@ -224,7 +229,7 @@ const goList = () => {
             />
           </svg>
 
-          등록 후 게시판에서 바로 확인할 수 있습니다.
+          {{ t('m078') }}
         </div>
 
         <div class="button-group">
@@ -234,7 +239,7 @@ const goList = () => {
             :disabled="submitting"
             @click="goList"
           >
-            취소
+            {{ t('m050') }}
           </button>
 
           <button
@@ -262,7 +267,7 @@ const goList = () => {
               class="button-spinner"
             ></span>
 
-            {{ submitting ? '등록 중...' : '게시글 등록' }}
+            {{ submitting ? t('m079') : t('m080') }}
           </button>
         </div>
       </footer>

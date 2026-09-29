@@ -1,4 +1,9 @@
 <script setup>
+import { useI18n } from 'vue-i18n'
+import { useUiMessage, useFormatLocale } from '../i18n'
+const { t } = useI18n()
+const formatLocale = useFormatLocale()
+
 import { computed, onMounted, ref } from 'vue'
 
 import {
@@ -20,7 +25,7 @@ import {
 
 const sites = ref([])
 const loading = ref(true)
-const errorMessage = ref('')
+const errorMessage = useUiMessage()
 
 
 // ========================================
@@ -148,7 +153,7 @@ const loadSites = async () => {
 
     errorMessage.value =
       error.response?.data?.message ||
-      '현장 정보를 불러오지 못했습니다.'
+      t('m403')
 
   } finally {
 
@@ -230,7 +235,7 @@ const searchSiteData = async () => {
 
     alert(
       error.response?.data?.message ||
-      '현장 검색에 실패했습니다.'
+      t('m404')
     )
 
   } finally {
@@ -297,7 +302,7 @@ const openDetail = async (site) => {
 
     alert(
       error.response?.data?.message ||
-      '현장 상세 정보를 불러오지 못했습니다.'
+      t('m405')
     )
 
   } finally {
@@ -389,7 +394,7 @@ const changeStatus = async () => {
   if (!newStatus.value) {
 
     alert(
-      '변경할 상태를 선택해주세요.'
+      t('m406')
     )
 
     return
@@ -401,7 +406,7 @@ const changeStatus = async () => {
   ) {
 
     alert(
-      '현재 상태와 동일한 상태입니다.'
+      t('m407')
     )
 
     return
@@ -431,7 +436,7 @@ const changeStatus = async () => {
     statusReason.value = ''
 
     alert(
-      '현장 상태가 변경되었습니다.'
+      t('m408')
     )
 
   } catch (error) {
@@ -443,7 +448,7 @@ const changeStatus = async () => {
 
     alert(
       error.response?.data?.message ||
-      '상태 변경에 실패했습니다.'
+      t('m171')
     )
 
   } finally {
@@ -466,7 +471,7 @@ const submitCreate = async () => {
   ) {
 
     alert(
-      '현장 코드, 현장명, 주소는 필수입니다.'
+      t('m409')
     )
 
     return
@@ -481,7 +486,7 @@ const submitCreate = async () => {
     )
 
     alert(
-      '현장이 등록되었습니다.'
+      t('m410')
     )
 
     showCreateModal.value = false
@@ -507,7 +512,7 @@ const submitCreate = async () => {
 
     alert(
       error.response?.data?.message ||
-      '현장 등록에 실패했습니다.'
+      t('m411')
     )
 
   } finally {
@@ -524,11 +529,11 @@ const submitCreate = async () => {
 const statusText = (status) => {
 
   const map = {
-    NORMAL: '정상',
-    WARNING: '주의',
-    ERROR: '장애',
-    MAINTENANCE: '점검중',
-    INACTIVE: '운영중지'
+    NORMAL: t('m081'),
+    WARNING: t('m082'),
+    ERROR: t('m083'),
+    MAINTENANCE: t('m084'),
+    INACTIVE: t('m412')
   }
 
   return map[status] || status
@@ -538,12 +543,12 @@ const statusText = (status) => {
 const typeText = (type) => {
 
   const map = {
-    TOLL_GATE: '요금소',
-    TUNNEL: '터널',
-    BRIDGE: '교량',
-    ROAD: '도로',
-    PARKING: '주차장',
-    ETC: '기타'
+    TOLL_GATE: t('m413'),
+    TUNNEL: t('m414'),
+    BRIDGE: t('m415'),
+    ROAD: t('m416'),
+    PARKING: t('m417'),
+    ETC: t('m096')
   }
 
   return map[type] || type
@@ -557,7 +562,7 @@ const formatDate = (date) => {
   }
 
   return new Date(date)
-    .toLocaleString('ko-KR')
+    .toLocaleString(formatLocale.value)
 }
 
 
@@ -583,16 +588,15 @@ onMounted(() => {
 
       <div>
         <p class="eyebrow">
-          SITE MANAGEMENT
+          {{ t('m418') }}
         </p>
 
         <h1>
-          현장 관리
+          {{ t('m215') }}
         </h1>
 
         <p class="header-description">
-          스마트 모빌리티 현장의
-          운영 상태와 변경 이력을 관리합니다.
+          {{ t('m419') }}
         </p>
       </div>
 
@@ -600,7 +604,7 @@ onMounted(() => {
         class="create-button"
         @click="showCreateModal = true"
       >
-        + 현장 등록
+        {{ t('m420') }}
       </button>
 
     </div>
@@ -614,7 +618,7 @@ onMounted(() => {
       v-if="loading"
       class="state-box"
     >
-      현장 정보를 불러오는 중입니다...
+      {{ t('m421') }}
     </div>
 
 
@@ -639,27 +643,27 @@ onMounted(() => {
       <div class="kpi-grid">
 
         <div class="kpi-card">
-          <span>전체 현장</span>
+          <span>{{ t('m099') }}</span>
           <strong>{{ totalCount }}</strong>
         </div>
 
         <div class="kpi-card">
-          <span>정상 운영</span>
+          <span>{{ t('m422') }}</span>
           <strong>{{ normalCount }}</strong>
         </div>
 
         <div class="kpi-card">
-          <span>주의</span>
+          <span>{{ t('m082') }}</span>
           <strong>{{ warningCount }}</strong>
         </div>
 
         <div class="kpi-card">
-          <span>장애</span>
+          <span>{{ t('m083') }}</span>
           <strong>{{ errorCount }}</strong>
         </div>
 
         <div class="kpi-card">
-          <span>점검중</span>
+          <span>{{ t('m084') }}</span>
           <strong>{{ maintenanceCount }}</strong>
         </div>
 
@@ -677,11 +681,11 @@ onMounted(() => {
           class="control"
         >
           <option value="name">
-            현장명
+            {{ t('m423') }}
           </option>
 
           <option value="address">
-            주소
+            {{ t('m424') }}
           </option>
         </select>
 
@@ -689,7 +693,7 @@ onMounted(() => {
         <input
           v-model="searchKeyword"
           class="control search-input"
-          placeholder="검색어 입력"
+          :placeholder="t('m425')"
           @keyup.enter="searchSiteData"
         />
 
@@ -700,27 +704,27 @@ onMounted(() => {
           @change="typeFilter = 'ALL'"
         >
           <option value="ALL">
-            전체 상태
+            {{ t('m184') }}
           </option>
 
           <option value="NORMAL">
-            정상
+            {{ t('m081') }}
           </option>
 
           <option value="WARNING">
-            주의
+            {{ t('m082') }}
           </option>
 
           <option value="ERROR">
-            장애
+            {{ t('m083') }}
           </option>
 
           <option value="MAINTENANCE">
-            점검중
+            {{ t('m084') }}
           </option>
 
           <option value="INACTIVE">
-            운영중지
+            {{ t('m412') }}
           </option>
         </select>
 
@@ -731,31 +735,31 @@ onMounted(() => {
           @change="statusFilter = 'ALL'"
         >
           <option value="ALL">
-            전체 유형
+            {{ t('m186') }}
           </option>
 
           <option value="TOLL_GATE">
-            요금소
+            {{ t('m413') }}
           </option>
 
           <option value="TUNNEL">
-            터널
+            {{ t('m414') }}
           </option>
 
           <option value="BRIDGE">
-            교량
+            {{ t('m415') }}
           </option>
 
           <option value="ROAD">
-            도로
+            {{ t('m416') }}
           </option>
 
           <option value="PARKING">
-            주차장
+            {{ t('m417') }}
           </option>
 
           <option value="ETC">
-            기타
+            {{ t('m096') }}
           </option>
         </select>
 
@@ -765,7 +769,7 @@ onMounted(() => {
           :disabled="searchLoading"
           @click="searchSiteData"
         >
-          {{ searchLoading ? '조회중...' : '조회' }}
+          {{ searchLoading ? t('m359') : t('m426') }}
         </button>
 
 
@@ -773,7 +777,7 @@ onMounted(() => {
           class="reset-button"
           @click="resetSearch"
         >
-          초기화
+          {{ t('m061') }}
         </button>
 
       </div>
@@ -788,10 +792,10 @@ onMounted(() => {
         <div class="table-header">
 
           <div>
-            <h2>현장 목록</h2>
+            <h2>{{ t('m427') }}</h2>
 
             <p>
-              총 {{ safeSites.length }}개의 현장
+              {{ t('counts.sites', safeSites.length) }}
             </p>
           </div>
 
@@ -804,13 +808,13 @@ onMounted(() => {
 
             <thead>
               <tr>
-                <th>현장 코드</th>
-                <th>현장명</th>
-                <th>유형</th>
-                <th>주소</th>
-                <th>담당자</th>
-                <th>상태</th>
-                <th>관리</th>
+                <th>{{ t('m430') }}</th>
+                <th>{{ t('m423') }}</th>
+                <th>{{ t('m185') }}</th>
+                <th>{{ t('m424') }}</th>
+                <th>{{ t('m385') }}</th>
+                <th>{{ t('m183') }}</th>
+                <th>{{ t('m431') }}</th>
               </tr>
             </thead>
 
@@ -863,7 +867,7 @@ onMounted(() => {
                     class="detail-button"
                     @click="openDetail(site)"
                   >
-                    상세
+                    {{ t('m192') }}
                   </button>
 
                 </td>
@@ -879,7 +883,7 @@ onMounted(() => {
                   colspan="7"
                   class="empty"
                 >
-                  조회된 현장이 없습니다.
+                  {{ t('m432') }}
                 </td>
 
               </tr>
@@ -911,11 +915,11 @@ onMounted(() => {
 
           <div>
             <p class="modal-eyebrow">
-              SITE DETAIL
+              {{ t('m433') }}
             </p>
 
             <h2>
-              현장 상세
+              {{ t('m434') }}
             </h2>
           </div>
 
@@ -933,7 +937,7 @@ onMounted(() => {
           v-if="detailLoading"
           class="modal-loading"
         >
-          상세 정보를 불러오는 중입니다...
+          {{ t('m197') }}
         </div>
 
 
@@ -946,28 +950,28 @@ onMounted(() => {
           <div class="detail-grid">
 
             <div class="detail-item">
-              <span>현장 코드</span>
+              <span>{{ t('m430') }}</span>
               <strong>
                 {{ selectedSite.siteCode }}
               </strong>
             </div>
 
             <div class="detail-item">
-              <span>현장명</span>
+              <span>{{ t('m423') }}</span>
               <strong>
                 {{ selectedSite.name }}
               </strong>
             </div>
 
             <div class="detail-item">
-              <span>현장 유형</span>
+              <span>{{ t('m435') }}</span>
               <strong>
                 {{ typeText(selectedSite.siteType) }}
               </strong>
             </div>
 
             <div class="detail-item">
-              <span>현재 상태</span>
+              <span>{{ t('m199') }}</span>
 
               <strong>
                 {{ statusText(selectedSite.status) }}
@@ -975,42 +979,42 @@ onMounted(() => {
             </div>
 
             <div class="detail-item wide">
-              <span>주소</span>
+              <span>{{ t('m424') }}</span>
               <strong>
                 {{ selectedSite.address }}
               </strong>
             </div>
 
             <div class="detail-item">
-              <span>담당자</span>
+              <span>{{ t('m385') }}</span>
               <strong>
                 {{ selectedSite.managerName || '-' }}
               </strong>
             </div>
 
             <div class="detail-item">
-              <span>연락처</span>
+              <span>{{ t('m436') }}</span>
               <strong>
                 {{ selectedSite.managerTel || '-' }}
               </strong>
             </div>
 
             <div class="detail-item wide">
-              <span>현장 설명</span>
+              <span>{{ t('m437') }}</span>
               <strong>
                 {{ selectedSite.description || '-' }}
               </strong>
             </div>
 
             <div class="detail-item">
-              <span>등록일</span>
+              <span>{{ t('m438') }}</span>
               <strong>
                 {{ formatDate(selectedSite.createdAt) }}
               </strong>
             </div>
 
             <div class="detail-item">
-              <span>수정일</span>
+              <span>{{ t('m027') }}</span>
               <strong>
                 {{ formatDate(selectedSite.updatedAt) }}
               </strong>
@@ -1024,9 +1028,9 @@ onMounted(() => {
           <div class="status-section">
 
             <div class="section-title">
-              <h3>현장 상태 변경</h3>
+              <h3>{{ t('m439') }}</h3>
               <p>
-                상태 변경 시 담당자와 변경 이력이 기록됩니다.
+                {{ t('m440') }}
               </p>
             </div>
 
@@ -1038,27 +1042,27 @@ onMounted(() => {
                 class="control"
               >
                 <option value="">
-                  변경 상태 선택
+                  {{ t('m441') }}
                 </option>
 
                 <option value="NORMAL">
-                  정상
+                  {{ t('m081') }}
                 </option>
 
                 <option value="WARNING">
-                  주의
+                  {{ t('m082') }}
                 </option>
 
                 <option value="ERROR">
-                  장애
+                  {{ t('m083') }}
                 </option>
 
                 <option value="MAINTENANCE">
-                  점검중
+                  {{ t('m084') }}
                 </option>
 
                 <option value="INACTIVE">
-                  운영중지
+                  {{ t('m412') }}
                 </option>
               </select>
 
@@ -1066,7 +1070,7 @@ onMounted(() => {
               <input
                 v-model="statusReason"
                 class="control reason-input"
-                placeholder="변경 사유 입력"
+                :placeholder="t('m442')"
               />
 
 
@@ -1077,8 +1081,8 @@ onMounted(() => {
               >
                 {{
                   statusLoading
-                    ? '변경중...'
-                    : '상태 변경'
+                    ? t('m443')
+                    : t('m204')
                 }}
               </button>
 
@@ -1094,11 +1098,11 @@ onMounted(() => {
             <div class="section-title">
 
               <h3>
-                상태 변경 이력
+                {{ t('m209') }}
               </h3>
 
               <p>
-                최근 변경 내역부터 표시됩니다.
+                {{ t('m444') }}
               </p>
 
             </div>
@@ -1108,7 +1112,7 @@ onMounted(() => {
               v-if="safeHistories.length === 0"
               class="history-empty"
             >
-              상태 변경 이력이 없습니다.
+              {{ t('m210') }}
             </div>
 
 
@@ -1144,7 +1148,7 @@ onMounted(() => {
 
 
                   <p>
-                    변경자:
+                    {{ t('m211') }}
                     <strong>
                       {{ history.changedBy }}
                     </strong>
@@ -1152,7 +1156,7 @@ onMounted(() => {
 
 
                   <p>
-                    변경 사유:
+                    {{ t('m445') }}
                     {{ history.reason || '-' }}
                   </p>
 
@@ -1187,11 +1191,11 @@ onMounted(() => {
 
           <div>
             <p class="modal-eyebrow">
-              CREATE SITE
+              {{ t('m446') }}
             </p>
 
             <h2>
-              현장 등록
+              {{ t('m447') }}
             </h2>
           </div>
 
@@ -1208,85 +1212,85 @@ onMounted(() => {
         <div class="form-grid">
 
           <label>
-            <span>현장 코드 *</span>
+            <span>{{ t('m448') }}</span>
 
             <input
               v-model="createForm.siteCode"
               class="control"
-              placeholder="SITE-002"
+              :placeholder="t('m449')"
             />
           </label>
 
 
           <label>
-            <span>현장명 *</span>
+            <span>{{ t('m450') }}</span>
 
             <input
               v-model="createForm.name"
               class="control"
-              placeholder="현장명"
+              :placeholder="t('m423')"
             />
           </label>
 
 
           <label class="full">
-            <span>주소 *</span>
+            <span>{{ t('m451') }}</span>
 
             <input
               v-model="createForm.address"
               class="control"
-              placeholder="현장 주소"
+              :placeholder="t('m452')"
             />
           </label>
 
 
           <label>
-            <span>현장 유형 *</span>
+            <span>{{ t('m453') }}</span>
 
             <select
               v-model="createForm.siteType"
               class="control"
             >
               <option value="TOLL_GATE">
-                요금소
+                {{ t('m413') }}
               </option>
 
               <option value="TUNNEL">
-                터널
+                {{ t('m414') }}
               </option>
 
               <option value="BRIDGE">
-                교량
+                {{ t('m415') }}
               </option>
 
               <option value="ROAD">
-                도로
+                {{ t('m416') }}
               </option>
 
               <option value="PARKING">
-                주차장
+                {{ t('m417') }}
               </option>
 
               <option value="ETC">
-                기타
+                {{ t('m096') }}
               </option>
             </select>
           </label>
 
 
           <label>
-            <span>담당자</span>
+            <span>{{ t('m385') }}</span>
 
             <input
               v-model="createForm.managerName"
               class="control"
-              placeholder="담당자명"
+              :placeholder="t('m454')"
             />
           </label>
 
 
           <label>
-            <span>담당자 연락처</span>
+            <span>{{ t('m455') }}</span>
 
             <input
               v-model="createForm.managerTel"
@@ -1297,12 +1301,12 @@ onMounted(() => {
 
 
           <label class="full">
-            <span>현장 설명</span>
+            <span>{{ t('m437') }}</span>
 
             <textarea
               v-model="createForm.description"
               class="control textarea"
-              placeholder="현장 설명"
+              :placeholder="t('m437')"
             ></textarea>
           </label>
 
@@ -1315,7 +1319,7 @@ onMounted(() => {
             class="cancel-button"
             @click="showCreateModal = false"
           >
-            취소
+            {{ t('m050') }}
           </button>
 
           <button
@@ -1325,8 +1329,8 @@ onMounted(() => {
           >
             {{
               createLoading
-                ? '등록중...'
-                : '현장 등록'
+                ? t('m456')
+                : t('m447')
             }}
           </button>
 

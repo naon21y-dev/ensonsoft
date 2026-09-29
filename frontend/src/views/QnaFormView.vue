@@ -1,4 +1,8 @@
 <script setup>
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
+import { useUiMessage } from '../i18n'
+
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import {
@@ -17,20 +21,20 @@ const secret = ref(false)
 
 const loading = ref(false)
 const saving = ref(false)
-const message = ref('')
+const message = useUiMessage()
 
 const id = computed(() => route.params.id)
 const isEdit = computed(() => !!id.value)
 
-const categories = [
-  ['GENERAL', '일반 문의'],
-  ['SITE', '현장 문의'],
-  ['EQUIPMENT', '장비 문의'],
-  ['VEHICLE', '차량번호 인식'],
-  ['VIDEO_ANALYSIS', '영상분석'],
-  ['MAINTENANCE', '유지보수'],
-  ['ETC', '기타']
-]
+const categories = computed(() => ([
+  ['GENERAL', t('m551')],
+  ['SITE', t('m552')],
+  ['EQUIPMENT', t('m553')],
+  ['VEHICLE', t('m342')],
+  ['VIDEO_ANALYSIS', t('m554')],
+  ['MAINTENANCE', t('m555')],
+  ['ETC', t('m096')]
+]))
 
 const loadQna = async () => {
   if (!isEdit.value) return
@@ -50,7 +54,7 @@ const loadQna = async () => {
 
     message.value =
       error.response?.data?.message ||
-      '문의 정보를 불러오지 못했습니다.'
+      t('m577')
   } finally {
     loading.value = false
   }
@@ -58,12 +62,12 @@ const loadQna = async () => {
 
 const submit = async () => {
   if (!title.value.trim()) {
-    message.value = '제목을 입력해주세요.'
+    message.value = t('m033')
     return
   }
 
   if (!content.value.trim()) {
-    message.value = '문의 내용을 입력해주세요.'
+    message.value = t('m578')
     return
   }
 
@@ -92,7 +96,7 @@ const submit = async () => {
 
     message.value =
       error.response?.data?.message ||
-      '문의 저장에 실패했습니다.'
+      t('m579')
   } finally {
     saving.value = false
   }
@@ -106,17 +110,17 @@ onMounted(loadQna)
 
     <header>
       <button class="back" @click="router.push('/qna')">
-        ← Q&A
+        {{ t('m580') }}
       </button>
 
-      <span class="eyebrow">CUSTOMER SUPPORT</span>
+      <span class="eyebrow">{{ t('m557') }}</span>
 
       <h1>
-        {{ isEdit ? '문의 수정' : '문의하기' }}
+        {{ isEdit ? t('m581') : t('m560') }}
       </h1>
 
       <p>
-        시스템 이용 중 궁금한 사항이나 문제를 문의해주세요.
+        {{ t('m582') }}
       </p>
     </header>
 
@@ -125,13 +129,13 @@ onMounted(loadQna)
     </div>
 
     <div v-if="loading" class="loading">
-      문의 정보를 불러오는 중입니다.
+      {{ t('m583') }}
     </div>
 
     <form v-else class="form-card" @submit.prevent="submit">
 
       <div class="field">
-        <label>문의 유형 <strong>*</strong></label>
+        <label>{{ t('m584') }} <strong>*</strong></label>
 
         <select v-model="category">
           <option
@@ -145,24 +149,24 @@ onMounted(loadQna)
       </div>
 
       <div class="field">
-        <label>제목 <strong>*</strong></label>
+        <label>{{ t('m042') }} <strong>*</strong></label>
 
         <input
           v-model="title"
           maxlength="200"
-          placeholder="문의 제목을 입력해주세요."
+          :placeholder="t('m585')"
         />
 
         <small>{{ title.length }} / 200</small>
       </div>
 
       <div class="field">
-        <label>문의 내용 <strong>*</strong></label>
+        <label>{{ t('m586') }} <strong>*</strong></label>
 
         <textarea
           v-model="content"
           rows="12"
-          placeholder="문의 내용을 자세히 작성해주세요."
+          :placeholder="t('m587')"
         ></textarea>
       </div>
 
@@ -170,9 +174,9 @@ onMounted(loadQna)
         <input v-model="secret" type="checkbox" />
 
         <div>
-          <strong>비공개 문의</strong>
+          <strong>{{ t('m567') }}</strong>
           <span>
-            작성자와 관리자만 문의 내용을 확인할 수 있습니다.
+            {{ t('m588') }}
           </span>
         </div>
       </label>
@@ -183,7 +187,7 @@ onMounted(loadQna)
           class="cancel"
           @click="router.back()"
         >
-          취소
+          {{ t('m050') }}
         </button>
 
         <button
@@ -193,10 +197,10 @@ onMounted(loadQna)
         >
           {{
             saving
-              ? '저장 중...'
+              ? t('m051')
               : isEdit
-                ? '수정 완료'
-                : '문의 등록'
+                ? t('m589')
+                : t('m590')
           }}
         </button>
       </div>

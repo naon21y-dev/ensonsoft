@@ -1,11 +1,15 @@
 <script setup>
+import { useI18n } from 'vue-i18n'
+import { useUiMessage } from '../i18n'
+const { t } = useI18n()
+
 import { computed, onMounted, ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import api from '../api/api'
 
 const member = ref(null)
 const loading = ref(true)
-const errorMessage = ref('')
+const errorMessage = useUiMessage()
 
 const getMyInfo = async () => {
   loading.value = true
@@ -19,7 +23,7 @@ const getMyInfo = async () => {
 
     errorMessage.value =
       error.response?.data?.message ||
-      '회원 정보를 불러오지 못했습니다.'
+      t('m457')
   } finally {
     loading.value = false
   }
@@ -28,14 +32,14 @@ const getMyInfo = async () => {
 const roleLabel = computed(() => {
   if (!member.value) return '-'
 
-  if (member.value.role === 'ADMIN') return '관리자'
-  if (member.value.role === 'USER') return '일반 사용자'
+  if (member.value.role === 'ADMIN') return t('m223')
+  if (member.value.role === 'USER') return t('m224')
 
   return member.value.role || '-'
 })
 
 const accountStatus = computed(() => {
-  return member.value?.enabled ? '활성화' : '비활성화'
+  return member.value?.enabled ? t('m458') : t('m459')
 })
 
 const initial = computed(() => {
@@ -48,7 +52,7 @@ const initial = computed(() => {
 })
 
 const passwordNotice = () => {
-  alert('비밀번호 변경 기능은 준비 중입니다.')
+  alert(t('m460'))
 }
 
 onMounted(() => {
@@ -62,12 +66,12 @@ onMounted(() => {
     <!-- HEADER -->
     <header class="page-header">
       <div>
-        <p class="eyebrow">USER PROFILE</p>
+        <p class="eyebrow">{{ t('m461') }}</p>
 
-        <h1>내 정보</h1>
+        <h1>{{ t('m238') }}</h1>
 
         <p class="page-description">
-          회원 정보를 확인하고 계정 상태를 관리할 수 있습니다.
+          {{ t('m462') }}
         </p>
       </div>
 
@@ -76,12 +80,12 @@ onMounted(() => {
           to="/"
           class="home-link"
         >
-          Home
+          {{ t('m463') }}
         </RouterLink>
 
         <span class="breadcrumb-arrow">›</span>
 
-        <strong>내 정보</strong>
+        <strong>{{ t('m238') }}</strong>
       </div>
     </header>
 
@@ -93,9 +97,9 @@ onMounted(() => {
     >
       <div class="spinner"></div>
 
-      <strong>회원 정보를 불러오는 중입니다.</strong>
+      <strong>{{ t('m464') }}</strong>
 
-      <p>잠시만 기다려 주세요.</p>
+      <p>{{ t('m465') }}</p>
     </div>
 
 
@@ -106,7 +110,7 @@ onMounted(() => {
     >
       <div class="state-icon">!</div>
 
-      <strong>회원 정보를 불러오지 못했습니다.</strong>
+      <strong>{{ t('m457') }}</strong>
 
       <p>{{ errorMessage }}</p>
 
@@ -115,7 +119,7 @@ onMounted(() => {
         class="retry-button"
         @click="getMyInfo"
       >
-        다시 시도
+        {{ t('m134') }}
       </button>
     </div>
 
@@ -165,7 +169,7 @@ onMounted(() => {
           </div>
 
           <div>
-            <span>아이디</span>
+            <span>{{ t('m264') }}</span>
             <strong>{{ member.username }}</strong>
           </div>
         </div>
@@ -181,7 +185,7 @@ onMounted(() => {
           </div>
 
           <div>
-            <span>이메일</span>
+            <span>{{ t('m398') }}</span>
             <strong>{{ member.email || '-' }}</strong>
           </div>
         </div>
@@ -193,7 +197,7 @@ onMounted(() => {
           </div>
 
           <div>
-            <span>회원번호</span>
+            <span>{{ t('m466') }}</span>
             <strong>{{ member.id }}</strong>
           </div>
         </div>
@@ -216,7 +220,7 @@ onMounted(() => {
             />
           </svg>
 
-          <span>비밀번호 변경</span>
+          <span>{{ t('m467') }}</span>
 
           <span class="security-arrow">›</span>
         </button>
@@ -231,13 +235,13 @@ onMounted(() => {
           <div class="section-heading">
             <div>
               <p class="section-label">
-                ACCOUNT INFORMATION
+                {{ t('m468') }}
               </p>
 
-              <h2>기본 정보</h2>
+              <h2>{{ t('m469') }}</h2>
 
               <p class="section-description">
-                회원님의 기본 계정 정보를 확인할 수 있습니다.
+                {{ t('m470') }}
               </p>
             </div>
 
@@ -247,7 +251,7 @@ onMounted(() => {
               @click="getMyInfo"
             >
               <span class="refresh-icon">↻</span>
-              새로고침
+              {{ t('m128') }}
             </button>
           </div>
 
@@ -258,7 +262,7 @@ onMounted(() => {
           <div class="info-grid">
 
             <div class="field">
-              <label>아이디</label>
+              <label>{{ t('m264') }}</label>
 
               <div class="field-value readonly">
                 {{ member.username }}
@@ -267,7 +271,7 @@ onMounted(() => {
 
 
             <div class="field">
-              <label>이름</label>
+              <label>{{ t('m396') }}</label>
 
               <div class="field-value">
                 {{ member.name || '-' }}
@@ -276,7 +280,7 @@ onMounted(() => {
 
 
             <div class="field">
-              <label>이메일</label>
+              <label>{{ t('m398') }}</label>
 
               <div class="field-value">
                 {{ member.email || '-' }}
@@ -285,7 +289,7 @@ onMounted(() => {
 
 
             <div class="field">
-              <label>회원번호</label>
+              <label>{{ t('m466') }}</label>
 
               <div class="field-value readonly">
                 {{ member.id }}
@@ -294,7 +298,7 @@ onMounted(() => {
 
 
             <div class="field field-full">
-              <label>권한</label>
+              <label>{{ t('m471') }}</label>
 
               <div class="field-value readonly role-value">
                 <span
@@ -302,13 +306,13 @@ onMounted(() => {
                   :class="{ admin: member.role === 'ADMIN' }"
                 ></span>
 
-                {{ member.role }}
+                {{ roleLabel }}
               </div>
             </div>
 
 
             <div class="field field-full">
-              <label>계정 상태</label>
+              <label>{{ t('m472') }}</label>
 
               <div class="field-value status-value">
                 <span
@@ -323,8 +327,8 @@ onMounted(() => {
                 <span class="status-description">
                   {{
                     member.enabled
-                      ? '현재 정상적으로 이용 가능한 계정입니다.'
-                      : '현재 비활성화된 계정입니다.'
+                      ? t('m473')
+                      : t('m474')
                   }}
                 </span>
               </div>
@@ -334,14 +338,13 @@ onMounted(() => {
 
 
           <div class="notice-box">
-            <div class="notice-icon">i</div>
+            <div class="notice-icon">{{ t('m475') }}</div>
 
             <div>
-              <strong>계정 정보 안내</strong>
+              <strong>{{ t('m476') }}</strong>
 
               <p>
-                아이디, 회원번호 및 권한은 사용자가 직접 변경할 수 없습니다.
-                정보 변경이 필요한 경우 관리자에게 문의해 주세요.
+                {{ t('m477') }}
               </p>
             </div>
           </div>
