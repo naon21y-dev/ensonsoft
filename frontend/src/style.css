@@ -1,0 +1,96 @@
+/* =========================================
+   ENSONSOFT SMART MOBILITY
+   Global Design System
+========================================= */
+
+:root {
+  /* Brand */
+  --brand: #1677ff;
+  --brand-light: #4f9cff;
+  --brand-soft: #eaf3ff;
+  --brand-dark: #0754b8;
+
+  /* Navy */
+  --navy-950: #061426;
+  --navy-900: #091a31;
+  --navy-850: #0c203a;
+  --navy-800: #102844;
+  --navy-700: #183a60;
+
+  /* Background */
+  --bg: #f3f6fa;
+  --surface: #ffffff;
+  --surface-soft: #f8fafc;
+
+  /* Text */
+  --text: #64748b;
+  --text-dark: #0f172a;
+  --text-medium: #334155;
+  --text-light: #94a3b8;
+
+  /* Border */
+  --border: #e5eaf0;
+  --border-soft: #eef2f6;
+
+  /* Status */
+  --success: #16a34a;
+  --success-bg: #ecfdf3;
+
+  --warning: #f59e0b;
+  --warning-bg: #fff8e7;
+
+  --danger: #ef4444;
+  --danger-bg: #fff1f2;
+
+  --info: #2563eb;
+  --info-bg: #eff6ff;
+
+  /* Shadow */
+  --shadow-sm:
+    0 1px 2px rgba(15, 23, 42, 0.04),
+    0 2px 8px rgba(15, 23, 42, 0.04);
+
+  --shadow-md:
+    0 8px 24px rgba(15, 23, 42, 0.07);
+
+  --shadow-lg:
+    0 18px 45px rgba(15, 23, 42, 0.12);
+
+  /* Radius */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+
+  /* Layout */
+  --sidebar-width: 248px;
+
+  /* Font */
+  font-family:
+    Pretendard,
+    "Noto Sans KR",
+    "Apple SD Gothic Neo",
+    Inter,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  color: var(--text);
+  background: var(--bg);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+
+/* =========================================
+   Reset
+========================================= */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
