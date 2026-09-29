@@ -1,4 +1,20 @@
 export default {
+  "attendance": {
+    "eyebrow": "従業員の勤怠", "adminEyebrow": "管理者 · 勤怠状況", "myTitle": "自分の勤怠", "adminTitle": "勤怠管理",
+    "myDescription": "出退勤を記録し、自分の勤務履歴を確認できます。", "adminDescription": "日付ごとに従業員の出退勤と勤務状況を確認します。",
+    "today": "本日の勤務状態", "myHistory": "自分の勤怠履歴", "employeeList": "従業員別の勤怠状況", "employeeDetail": "従業員の勤怠詳細",
+    "employee": "従業員", "date": "勤務日", "checkInAt": "出勤時刻", "checkOutAt": "退勤時刻", "worked": "勤務時間", "workType": "勤務区分", "status": "状態", "notes": "特記事項",
+    "checkIn": "出勤する", "checkOut": "退勤する", "saveNotes": "特記事項を保存", "refresh": "更新", "search": "照会", "reset": "リセット", "all": "すべて", "detail": "詳細", "close": "閉じる", "from": "開始日", "to": "終了日",
+    "notesPlaceholder": "勤務に関する特記事項を入力してください。", "searchPlaceholder": "氏名またはユーザーIDで検索", "loading": "勤怠情報を読み込んでいます。", "empty": "該当する勤怠情報はありません。",
+    "serverTimeHint": "出退勤はサーバー時刻で記録されます。出勤は1日1回で、勤務時間は休憩時間を差し引く前の経過時間です。",
+    "overnight": "{date}に開始した勤務が継続中です。先にその勤務の退勤を記録してください。", "summaryHint": "集計は検索・フィルター適用前の全従業員が対象です。",
+    "absenceHint": "USERアカウントを従業員として表示します。対象日に記録がなければ未出勤とし、日付をまたぐ勤務は出勤日に集計します。", "rangeHint": "最大366日間 · 登録前の日付を除外 · 未出勤は休日や欠勤の判定ではありません。",
+    "duration": "{hours}時間{minutes}分", "resultCount": "{count}人", "checkedIn": "出勤を記録しました。", "checkedOut": "退勤を記録しました。", "notesSaved": "特記事項を保存しました。",
+    "types": { "NORMAL": "通常勤務", "DUTY": "当直", "EMERGENCY": "緊急勤務", "SUBSTITUTE": "代替勤務" },
+    "states": { "NOT_CHECKED_IN": "未出勤", "WORKING": "勤務中", "CHECKED_OUT": "退勤済み" },
+    "summary": { "total": "全従業員", "working": "勤務中", "notCheckedIn": "未出勤", "checkedOut": "退勤", "duty": "当直", "emergency": "緊急勤務", "substitute": "代替勤務" },
+    "errors": { "employeeNotFound": "従業員が見つかりません。", "employeeUnavailable": "勤怠を記録できる従業員アカウントではありません。", "alreadyWorking": "継続中の勤務があります。先に退勤してください。", "alreadyCheckedIn": "本日の出勤はすでに記録されています。", "notWorking": "退勤できる勤務がありません。", "clockError": "サーバー時刻を確認できません。管理者にお問い合わせください。", "noRecord": "特記事項を保存する勤怠記録がありません。", "invalidInput": "勤務区分と入力内容を確認してください。特記事項は2000文字までです。", "invalidRange": "期間を確認してください。未来の日付や366日を超える期間は照会できません。", "unauthorized": "ログインの有効期限が切れました。再度ログインしてください。", "forbidden": "この勤怠機能にアクセスする権限がありません。", "failed": "勤怠のリクエストに失敗しました。更新して再試行してください。" }
+  },
   "common": {
     "language": "言語",
     "korean": "한국어",

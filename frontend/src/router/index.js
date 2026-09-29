@@ -5,6 +5,8 @@ import LoginView from '../views/LoginView.vue'
 import SignupView from '../views/SignupView.vue'
 import UserView from '../views/UserView.vue'
 import AdminView from '../views/AdminView.vue'
+import AttendanceView from '../views/AttendanceView.vue'
+import AdminAttendanceView from '../views/AdminAttendanceView.vue'
 
 import BoardListView from '../views/BoardListView.vue'
 import BoardDetailView from '../views/BoardDetailView.vue'
@@ -27,6 +29,8 @@ import QnaFormView from '../views/QnaFormView.vue'
 
 
 const routes = [
+  { path: '/attendance', name: 'attendance', component: AttendanceView, meta: { requiresAuth: true, requiresEmployee: true } },
+  { path: '/admin/attendance', name: 'adminAttendance', component: AdminAttendanceView, meta: { requiresAuth: true, requiresAdmin: true } },
 
   // =========================
   // 홈
@@ -280,6 +284,7 @@ router.beforeEach((to) => {
 
 
   // 관리자 전용 페이지
+  if (to.meta.requiresEmployee && role !== 'USER') return '/'
   if (
     to.meta.requiresAdmin &&
     role !== 'ADMIN'

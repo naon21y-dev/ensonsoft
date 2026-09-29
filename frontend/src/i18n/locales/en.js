@@ -1,4 +1,20 @@
 export default {
+  "attendance": {
+    "eyebrow": "EMPLOYEE ATTENDANCE", "adminEyebrow": "ADMINISTRATION · ATTENDANCE", "myTitle": "My attendance", "adminTitle": "Attendance management",
+    "myDescription": "Clock in and out and review your work history.", "adminDescription": "Review employee attendance and working hours by date.",
+    "today": "Today's work status", "myHistory": "My attendance history", "employeeList": "Employee attendance", "employeeDetail": "Employee attendance details",
+    "employee": "Employee", "date": "Work date", "checkInAt": "Clock-in time", "checkOutAt": "Clock-out time", "worked": "Working hours", "workType": "Work type", "status": "Status", "notes": "Notes",
+    "checkIn": "Clock in", "checkOut": "Clock out", "saveNotes": "Save notes", "refresh": "Refresh", "search": "Search", "reset": "Reset", "all": "All", "detail": "Details", "close": "Close", "from": "From", "to": "To",
+    "notesPlaceholder": "Enter any work-related notes.", "searchPlaceholder": "Search employee name or username", "loading": "Loading attendance information.", "empty": "No attendance records found.",
+    "serverTimeHint": "Clock-in and clock-out use server time. One shift per day; working hours are elapsed time before any break deductions.",
+    "overnight": "Your shift from {date} is still open. Clock out of that shift first.", "summaryHint": "Summary includes all employees before search and filters.",
+    "absenceHint": "Employees are USER accounts. No record on the selected date means not clocked in. Overnight shifts count toward their clock-in date.", "rangeHint": "Up to 366 days · Dates before registration excluded · Not clocked in does not determine leave or absence.",
+    "duration": "{hours}h {minutes}m", "resultCount": "{count} employees", "checkedIn": "Clock-in recorded.", "checkedOut": "Clock-out recorded.", "notesSaved": "Notes saved.",
+    "types": { "NORMAL": "Regular", "DUTY": "On duty", "EMERGENCY": "Emergency", "SUBSTITUTE": "Substitute" },
+    "states": { "NOT_CHECKED_IN": "Not clocked in", "WORKING": "Working", "CHECKED_OUT": "Clocked out" },
+    "summary": { "total": "All employees", "working": "Working", "notCheckedIn": "Not clocked in", "checkedOut": "Clocked out", "duty": "On duty", "emergency": "Emergency", "substitute": "Substitute" },
+    "errors": { "employeeNotFound": "Employee not found.", "employeeUnavailable": "This account cannot record employee attendance.", "alreadyWorking": "You have an open shift. Clock out first.", "alreadyCheckedIn": "You have already clocked in today.", "notWorking": "There is no open shift to clock out of.", "clockError": "Server time could not be verified. Contact an administrator.", "noRecord": "There is no attendance record for these notes.", "invalidInput": "Check the work type and input. Notes may contain up to 2000 characters.", "invalidRange": "Check the date range. Future dates and ranges exceeding 366 days are not allowed.", "unauthorized": "Your session has expired. Sign in again.", "forbidden": "You do not have permission to access this attendance feature.", "failed": "The attendance request failed. Refresh and try again." }
+  },
   "common": {
     "language": "Language",
     "korean": "한국어",

@@ -1,4 +1,20 @@
 export default {
+  "attendance": {
+    "eyebrow": "직원 근태", "adminEyebrow": "관리자 · 근태 현황", "myTitle": "내 근태", "adminTitle": "근태관리",
+    "myDescription": "출퇴근을 기록하고 본인의 근무 이력을 확인하세요.", "adminDescription": "날짜별 직원의 출퇴근과 근무 현황을 확인합니다.",
+    "today": "오늘 근무상태", "myHistory": "본인 근태이력", "employeeList": "직원별 근태 현황", "employeeDetail": "직원 근태 상세",
+    "employee": "직원", "date": "근무일", "checkInAt": "출근 시각", "checkOutAt": "퇴근 시각", "worked": "근무시간", "workType": "근무구분", "status": "상태", "notes": "특이사항",
+    "checkIn": "출근하기", "checkOut": "퇴근하기", "saveNotes": "특이사항 저장", "refresh": "새로고침", "search": "조회", "reset": "초기화", "all": "전체", "detail": "상세", "close": "닫기", "from": "시작일", "to": "종료일",
+    "notesPlaceholder": "근무 관련 특이사항을 작성하세요.", "searchPlaceholder": "직원 이름 또는 아이디 검색", "loading": "근태 정보를 불러오는 중입니다.", "empty": "조회된 근태 정보가 없습니다.",
+    "serverTimeHint": "출퇴근 시각은 서버 시간으로 기록됩니다. 하루 한 번 출근하며, 근무시간은 휴게시간 차감 전 경과시간입니다.",
+    "overnight": "{date}에 시작한 근무가 진행 중입니다. 먼저 해당 근무의 퇴근을 기록해주세요.", "summaryHint": "요약은 검색·필터 적용 전 전체 직원 기준입니다.",
+    "absenceHint": "USER 계정을 직원으로 표시합니다. 선택한 날짜에 기록이 없으면 미출근이며, 자정을 넘긴 근무는 출근일에 집계합니다.", "rangeHint": "최대 366일 조회 · 가입 전 날짜 제외 · 미출근은 휴일/결근 판정이 아닙니다.",
+    "duration": "{hours}시간 {minutes}분", "resultCount": "{count}명", "checkedIn": "출근이 기록되었습니다.", "checkedOut": "퇴근이 기록되었습니다.", "notesSaved": "특이사항을 저장했습니다.",
+    "types": { "NORMAL": "일반근무", "DUTY": "당직", "EMERGENCY": "긴급근무", "SUBSTITUTE": "대근" },
+    "states": { "NOT_CHECKED_IN": "미출근", "WORKING": "근무중", "CHECKED_OUT": "퇴근완료" },
+    "summary": { "total": "전체 직원", "working": "근무중", "notCheckedIn": "미출근", "checkedOut": "퇴근", "duty": "당직", "emergency": "긴급근무", "substitute": "대근" },
+    "errors": { "employeeNotFound": "직원 정보를 찾을 수 없습니다.", "employeeUnavailable": "근태 기록이 가능한 직원 계정이 아닙니다.", "alreadyWorking": "진행 중인 근무가 있습니다. 먼저 퇴근을 기록해주세요.", "alreadyCheckedIn": "오늘 출근은 이미 기록되었습니다.", "notWorking": "퇴근할 수 있는 진행 중 근무가 없습니다.", "clockError": "서버 시각을 확인할 수 없습니다. 관리자에게 문의해주세요.", "noRecord": "특이사항을 저장할 근태 기록이 없습니다.", "invalidInput": "근무구분과 입력 내용을 확인해주세요. 특이사항은 최대 2000자입니다.", "invalidRange": "조회 기간을 확인해주세요. 미래 날짜와 366일을 초과하는 기간은 조회할 수 없습니다.", "unauthorized": "로그인이 만료되었습니다. 다시 로그인해주세요.", "forbidden": "이 근태 기능에 접근할 권한이 없습니다.", "failed": "근태 요청에 실패했습니다. 새로고침 후 다시 시도해주세요." }
+  },
   "m001": "회원 목록 조회 성공",
   "m002": "관리자만 접근할 수 있습니다.",
   "m003": "로그인이 필요합니다.",

@@ -72,6 +72,8 @@ public class SecurityConfig {
                 // ========================================
                 .authorizeHttpRequests(auth -> auth
 
+                        .requestMatchers("/api/attendance/**").hasRole("USER")
+
                         // --------------------------------
                         // 로그인 없이 접근 가능
                         // --------------------------------

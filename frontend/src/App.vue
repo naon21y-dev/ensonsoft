@@ -312,11 +312,20 @@ const logout = () => {
              ADMIN
         ====================================== -->
 
+        <RouterLink v-if="authStore.role === 'USER'" to="/attendance" class="nav-item">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm0 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16Zm1-13h-2v6l5 3 1-1.7-4-2.3V7Z" /></svg></span>
+          <span class="nav-text">{{ t('attendance.myTitle') }}</span>
+        </RouterLink>
+
         <template v-if="authStore.isAdmin">
 
           <p class="nav-label admin-label">
             {{ t('m504') }}
           </p>
+          <RouterLink to="/admin/attendance" class="nav-item">
+            <span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm0 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16Zm1-13h-2v6l5 3 1-1.7-4-2.3V7Z" /></svg></span>
+            <span class="nav-text">{{ t('attendance.adminTitle') }}</span>
+          </RouterLink>
 
           <RouterLink
             to="/admin"
